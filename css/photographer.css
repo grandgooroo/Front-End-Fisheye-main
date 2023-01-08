@@ -48,6 +48,31 @@
     text-align: center;
 }
 
+.select-menu {
+    display: flex;
+    align-items: center;
+    margin: 3rem 0 3rem 0;
+}
+
+.media-section {
+    display: grid;
+    justify-content: center;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    margin: 100px 0 50px 0;
+    background-color: aqua;
+}
+
+img {
+    height: 200px;
+    width: 200px;
+    max-block-size: 200px;
+    border-radius: 5px;
+    object-fit: cover;
+    padding: 5px;
+    background-color: rgb(229, 229, 229);
+}
+
 form {
     display: flex;
     width: 100%;
