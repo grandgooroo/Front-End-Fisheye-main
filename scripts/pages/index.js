@@ -1,8 +1,20 @@
-
-  // récupérer les photographes
+// Declaration d'une variable globale pour les Datas.
+class Photographer {
+  constructor(name, id, city, country, price, portrait)
+  {
+    this.name = name;
+    this.id = id;
+    this.city = city;
+    this.country = country;
+    this.price = price;
+    this.portrait = portrait;
+  }
+}
+  
+  /* récupérer les photographes*/
   function getPhotographersData()  
   {
-    let getPhotographers = fetch("data/photographers.json")
+    photographersData = fetch("data/photographers.json")
         .then(resp => resp.json())
         .then(data => 
         {
@@ -15,6 +27,25 @@
         })
   };
 
+// let photographersData2 = [10];
+// let data2 = fetch("data/photographers.json")
+//                         .then(resp => resp.json())
+//                         .then(data =>
+//                           {
+//                             let i = 0;
+//                               for (const photographer of data.photographers)
+//                               {
+//                                 photographersData2[i] = new Photographer(photographer.name, 
+//                                   photographer.id, 
+//                                   photographer.city, 
+//                                   photographer.country, 
+//                                   photographer.price, 
+//                                   photographer.portrait);
+//                                   i++;
+//                               }
+//                           });                  
+//                           console.table();  
+//                           console.table(data2);                      
 
   function createHTMLPhotographer(photographer) {
     let photographersSection = document.querySelector(".photographer_section")
@@ -35,18 +66,6 @@
   // afficher tous le photographes
   getPhotographersData();  
 
-
-class photographer {
-    constructor(name, id, city, country, price, portrait)
-    {
-      this.name = name;
-      this.id = id;
-      this.city = city;
-      this.country = country;
-      this.price = price;
-      this.portrait = portrait;
-    }
-}
 
 // Gallerie 
 // Déclarer le chemin des images
