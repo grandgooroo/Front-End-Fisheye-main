@@ -26,13 +26,26 @@ async function init ()
     dataGlobal = await getData2();
     media = await getData3();
     listenerSort();
+    getPhotographersId();
+    mediaFactory(); 
     // Image media Filter
 // const imageMedia = media.filter(mediaObject => 
 //     mediaObject.type === "image");
 //     console.table(imageMedia);
 }
 
+function getPhotographersId()  
+{
+    
+        const params = new URLSearchParams(window.location.search);
+        // console.log(params);
+        const userId = Number(params.get('id'));
 
+        const user = dataGlobal.photographers.find(data => data.id === userId);
+        console.log(user);
+            
+        createHTMLPhotographer(user)
+}
 
 const mainSection = document.querySelector("#main");
 const divMediaSection = document.createElement("media-section");
@@ -61,52 +74,19 @@ function createHTMLPhotographer(photographer)
         // article.innerHTML = `<img src=""></img>`
 
         photographersSection.appendChild(article)
-    };
-
-    function getPhotographersId()  
-    {
-        // let getPhotographers = fetch("data/photographers.json")
-        //     .then(resp => resp.json())
-        //     .then(data => 
-        {
-            const params = new URLSearchParams(window.location.search);
-            // console.log(params);
-            const userId = Number(params.get('id'));
-
-            const user = dataGlobal.photographers.find(data => data.id === userId);
-            console.log(user);
-                
-            createHTMLPhotographer(user)
-        });
-    }
-
-// function createImage()
-//     {
-//         const mediaSection = document.createElement('section');
-//         const img = document.createElement("img");
-//         {
-//             article.innerHTML = `
-//             <img src=${mediaPictures}></img>
-//             `;
-//         }
-//     };   
+    };  
 
 function mediaFactory()
     
     {
-        // Requête HTTP pour récup les données du photographe
-        let getPhotographers = fetch("data/photographers.json")
-        .then(resp => resp.json())
-        .then(data => 
-        {
             const params = new URLSearchParams(window.location.search);
             const userId = Number(params.get('id'));
-            const user = data.media.find(data => data.photographerId === userId);
+            const user = media.find(data => data.photographerId === userId);
             // console.log(user);
-            const medias = data.media.filter(data => data.photographerId === userId);
+            const medias = media.filter(data => data.photographerId === userId);
             // console.log(medias);
 
-            const { id, title, country, image, video, likes, date, price } = data.media;
+            // const { id, title, country, image, video, likes, date, price } = data.media;
             
             mainSection.appendChild(divMediaSection);
             // data.media.forEach(image => {
@@ -115,10 +95,9 @@ function mediaFactory()
 
                 for (const image of medias)
                 {
-                    createItem(image, sort());
-                    console.log(createItem);
+                    createItem(image, sort(user));
+                    // console.log(createItem);
                 }
-        });
     };   
 
 function createItem(media)
@@ -144,27 +123,13 @@ function createItem(media)
         divMediaSection.appendChild(mediaItem);
     };
 
-//     function createMenuSelect()
-//     {
-
-//     }
-
-//     // Section dropdown et tri des médias
-// function onchangeMenu()
-//     {
-//         // document.getElementById('element_id').change = function() 
-//         // {
-//         // // your logic
-//         // };
-//     };
-
 function listenerSort() 
     {
         let select = document.querySelector("select");
 
         select.addEventListener("change", () =>
         {
-            sort("likes");
+            sort("date");
         });
     }
 
@@ -209,43 +174,42 @@ function listenerSort()
             console.log("trie like");
             
             break;
-        //     case 'date':  // si (type.date === 'value2')
-        //     ...
-        //     [break]
-        
-        //     default:
-        //     ...
-        //     [break]
+            case 'date':  // si (type.date === 'value2')
+            console.log("trie date");
+
+            break;
+
+            case 'title':
+                console.log("trie titre");
         }
             
             /* Trier par "likes" */
-            const likesCounter = dataGlobal;
+            const likesCounter = media;
             const byValue = (a,b) => b.likes - a.likes;
             const sorted = [...likesCounter].sort(byValue);
             // console.table(sorted);
 
             /* Trier par "date" */
 
-            // const dateSort = data.media.slice().sort((a, b) => b.date - a.date);
+            const dateSort = media.slice().sort((a, b) => b.date - a.date);
             // console.table(dateSort);
 
             /* Trier par "title" */
 
             // function titleSort(media)
-            // {
-            //     return media.sort(function(x, y)
+            {
+                return media.sort(function(x, y)
     
-            //     {
-            //         console.log(x);
-            //         return x.title.localeCompare(y.title);
-            //     });
-            // }
-            // titleSort(data.media);
+                {
+                    // console.log(x);
+                    return x.title.localeCompare(y.title);
+                });
+            }
+            titleSort(media);
 
     }
 
   // Afficher le profil du photographe
-getPhotographersId(); 
+
 createDropdownMenu();
-mediaFactory();
 init();
