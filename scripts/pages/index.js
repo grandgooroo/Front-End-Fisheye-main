@@ -1,4 +1,15 @@
 // Declaration d'une variable globale pour les Datas.
+
+
+
+async function init ()
+{
+    dataGlobal = await getData2();
+    console.log(dataGlobal);
+}
+
+
+// Class
 class Photographer {
   constructor(name, id, city, country, price, portrait)
   {
@@ -25,27 +36,7 @@ class Photographer {
             createHTMLPhotographer(photographer)
           }
         })
-  };
-
-// let photographersData2 = [10];
-// let data2 = fetch("data/photographers.json")
-//                         .then(resp => resp.json())
-//                         .then(data =>
-//                           {
-//                             let i = 0;
-//                               for (const photographer of data.photographers)
-//                               {
-//                                 photographersData2[i] = new Photographer(photographer.name, 
-//                                   photographer.id, 
-//                                   photographer.city, 
-//                                   photographer.country, 
-//                                   photographer.price, 
-//                                   photographer.portrait);
-//                                   i++;
-//                               }
-//                           });                  
-//                           console.table();  
-//                           console.table(data2);                      
+  };               
 
   function createHTMLPhotographer(photographer) {
     let photographersSection = document.querySelector(".photographer_section")
@@ -96,3 +87,4 @@ likeButtons.forEach(function (likeButton) {
         totalCounter.innerText = totalLikes
     })
 })
+init();
