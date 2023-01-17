@@ -1,6 +1,45 @@
 // créer une variable globale
-// const photographersData = getPhotographersData();
 
+// import * as monModule from '/modules/mon-module.js';
+const getData2 = async () => {
+    const response = await fetch("data/photographers.json");
+    const data = await response.json();
+    // console.table(data.media);
+
+    return data;
+    };
+/* Ex 1 */
+let dataGlobal;
+
+const getData3 = async () => {
+    const response = await fetch("data/photographers.json");
+    const data = await response.json();
+    const media = data.media;
+    return media;
+    
+};
+
+let media;
+
+async function init ()
+{
+    dataGlobal = await getData2();
+    media = await getData3();
+    listenerSort();
+    // Image media Filter
+// const imageMedia = media.filter(mediaObject => 
+//     mediaObject.type === "image");
+//     console.table(imageMedia);
+}
+
+
+
+const mainSection = document.querySelector("#main");
+const divMediaSection = document.createElement("media-section");
+divMediaSection.classList.add("media-section");
+const menuSection = document.createElement("dropdown-menu__container");
+menuSection.classList.add("select-menu");
+let changeMenuValue = document.querySelector("#monselect");
 
 function createHTMLPhotographer(photographer) 
     {
@@ -26,31 +65,31 @@ function createHTMLPhotographer(photographer)
 
     function getPhotographersId()  
     {
-        let getPhotographers = fetch("data/photographers.json")
-            .then(resp => resp.json())
-            .then(data => 
+        // let getPhotographers = fetch("data/photographers.json")
+        //     .then(resp => resp.json())
+        //     .then(data => 
         {
             const params = new URLSearchParams(window.location.search);
             // console.log(params);
             const userId = Number(params.get('id'));
 
-            const user = data.photographers.find(data => data.id === userId);
-            // console.log(user);
+            const user = dataGlobal.photographers.find(data => data.id === userId);
+            console.log(user);
                 
             createHTMLPhotographer(user)
         });
     }
 
-function createImage()
-    {
-        const mediaSection = document.createElement('section');
-        const img = document.createElement("img");
-        {
-            article.innerHTML = `
-            <img src=${mediaPictures}></img>
-            `;
-        }
-    };   
+// function createImage()
+//     {
+//         const mediaSection = document.createElement('section');
+//         const img = document.createElement("img");
+//         {
+//             article.innerHTML = `
+//             <img src=${mediaPictures}></img>
+//             `;
+//         }
+//     };   
 
 function mediaFactory()
     
@@ -63,16 +102,12 @@ function mediaFactory()
             const params = new URLSearchParams(window.location.search);
             const userId = Number(params.get('id'));
             const user = data.media.find(data => data.photographerId === userId);
-            console.log(user);
+            // console.log(user);
             const medias = data.media.filter(data => data.photographerId === userId);
             // console.log(medias);
 
             const { id, title, country, image, video, likes, date, price } = data.media;
-            // const {photographerId} = data.media.photographerId;
-
-            let mainSection = document.querySelector("#main");
-            const divMediaSection = document.createElement("media-section");
-            divMediaSection.innerHTML = `<div class="media-section"></div>`;
+            
             mainSection.appendChild(divMediaSection);
             // data.media.forEach(image => {
             //     createItem(image);
@@ -80,7 +115,7 @@ function mediaFactory()
 
                 for (const image of medias)
                 {
-                    createItem(image);
+                    createItem(image, sort());
                     console.log(createItem);
                 }
         });
@@ -88,13 +123,10 @@ function mediaFactory()
 
 function createItem(media)
     {
-
-        let mainSection = document.querySelector("#main");
-        const mediaSection = document.createElement("article");
+        const mediaItem = document.createElement("article");
         const mediaFolder = `/assets/medias/${media.photographerId}`;
-        // let mediaElement = document.createElement("");
         
-        console.table(mediaFolder); // Faire une condition si "Video" alors...ou "Switch" !?
+        // console.table(mediaFolder); // Faire une condition si "Video" alors...ou "Switch" !?
         
         // if (media.type === "image")
         // {
@@ -103,32 +135,93 @@ function createItem(media)
         //     {
         //         mediaElement = document.createElement("video");
         //     }
-        mediaSection.innerHTML = `
+        mediaItem.innerHTML = `
             <h2>${media.photographerId}</h2>
             <p>${media.title}</p>
             <img src="${mediaFolder}/${media.image}" alt="Image de ${media.name}" class="img">
         `;
 
-        mainSection.appendChild(mediaSection);
+        divMediaSection.appendChild(mediaItem);
     };
 
-    function createMenuSelect()
-    {
+//     function createMenuSelect()
+//     {
 
-    }
-    
-    function sort()
+//     }
+
+//     // Section dropdown et tri des médias
+// function onchangeMenu()
+//     {
+//         // document.getElementById('element_id').change = function() 
+//         // {
+//         // // your logic
+//         // };
+//     };
+
+function listenerSort() 
     {
-        let getPhotographers = fetch("data/photographers.json")
-        .then(resp => resp.json())
-        .then(data => 
+        let select = document.querySelector("select");
+
+        select.addEventListener("change", () =>
         {
-            const { title, likes, date, price } = data.media; // Utiliser un switch pour les différents cas ?
-            /* Trier par "likes" */
+            sort("likes");
+        });
+    }
 
-            // const likesCounter = data.media;
-            // const byValue = (a,b) => b.likes - a.likes;
-            // const sorted = [...likesCounter].sort(byValue);
+
+    function createDropdownMenu() // Avec Select
+    {
+        
+        menuSection.innerHTML = `
+        <label id="combo1-label" class="combo-label">Trier par :</label>
+            <div class="">
+                <select id="monselect">
+                    <option value="likes" selected>Popularité</option>
+                    <option value="title">Titre</option>
+                    <option value="date">Date</option> 
+                </select>
+            </div>
+        `;
+        mainSection.appendChild(menuSection)
+    }
+
+    function createDropdownMenuBtn() // Avec Button
+    {
+        menuSection.innerHTML = `
+            <label id="combo1-label" class="combo-label">Trier par :</label>
+                <div class="combo js-select">
+                    <button id="current-order">Popularité</button> */Masquer avec display none/*
+                    <div id="options-order"> */Afficher avec display block/*
+                    <button data-order="date">Date</button>
+                    <button data-order="popularity">Popularité</button>
+                    <button data-order="title">Titre</button>
+                </div>
+        `;
+        mainSection.appendChild(menuSection)
+    }
+
+    function sort(type) // En parametre le data.media et le type
+    {
+            /* Avec switch */
+        switch(type) 
+        {
+            case 'likes':  // si (type.likes === 'value1')
+            console.log("trie like");
+            
+            break;
+        //     case 'date':  // si (type.date === 'value2')
+        //     ...
+        //     [break]
+        
+        //     default:
+        //     ...
+        //     [break]
+        }
+            
+            /* Trier par "likes" */
+            const likesCounter = dataGlobal;
+            const byValue = (a,b) => b.likes - a.likes;
+            const sorted = [...likesCounter].sort(byValue);
             // console.table(sorted);
 
             /* Trier par "date" */
@@ -138,21 +231,21 @@ function createItem(media)
 
             /* Trier par "title" */
 
-            function titleSort(media)
-            {
-                return media.sort(function(x, y)
+            // function titleSort(media)
+            // {
+            //     return media.sort(function(x, y)
     
-                {
-                    console.log(x);
-                    return x.title.localeCompare(y.title);
-                });
-            }
-            titleSort(data.media);
+            //     {
+            //         console.log(x);
+            //         return x.title.localeCompare(y.title);
+            //     });
+            // }
+            // titleSort(data.media);
 
-        });
-    };
+    }
 
   // Afficher le profil du photographe
-getPhotographersId();  
+getPhotographersId(); 
+createDropdownMenu();
 mediaFactory();
-sort();
+init();
