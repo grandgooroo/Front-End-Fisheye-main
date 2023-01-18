@@ -10,28 +10,17 @@ const getData2 = async () => {
     };
 /* Ex 1 */
 let dataGlobal;
-
-const getData3 = async () => {
-    const response = await fetch("data/photographers.json");
-    const data = await response.json();
-    const media = data.media;
-    return media;
-    
-};
-
 let media;
 
 async function init ()
 {
     dataGlobal = await getData2();
-    media = await getData3();
+    media = dataGlobal.media;
     listenerSort();
     getPhotographersId();
     mediaFactory(); 
-    // Image media Filter
-// const imageMedia = media.filter(mediaObject => 
-//     mediaObject.type === "image");
-//     console.table(imageMedia);
+    sort();
+    mediaFactory();
 }
 
 function getPhotographersId()  
@@ -85,8 +74,6 @@ function mediaFactory()
             // console.log(user);
             const medias = media.filter(data => data.photographerId === userId);
             // console.log(medias);
-
-            // const { id, title, country, image, video, likes, date, price } = data.media;
             
             mainSection.appendChild(divMediaSection);
             // data.media.forEach(image => {
@@ -129,7 +116,7 @@ function listenerSort()
 
         select.addEventListener("change", () =>
         {
-            sort("date");
+            sort('date');
         });
     }
 
@@ -138,8 +125,8 @@ function listenerSort()
     {
         
         menuSection.innerHTML = `
-        <label id="combo1-label" class="combo-label">Trier par :</label>
-            <div class="">
+        <label id="menuSelect" class="menuSelect">Trier par :</label>
+            <div class="js-select">
                 <select id="monselect">
                     <option value="likes" selected>Popularité</option>
                     <option value="title">Titre</option>
@@ -150,63 +137,58 @@ function listenerSort()
         mainSection.appendChild(menuSection)
     }
 
-    function createDropdownMenuBtn() // Avec Button
-    {
-        menuSection.innerHTML = `
-            <label id="combo1-label" class="combo-label">Trier par :</label>
-                <div class="combo js-select">
-                    <button id="current-order">Popularité</button> */Masquer avec display none/*
-                    <div id="options-order"> */Afficher avec display block/*
-                    <button data-order="date">Date</button>
-                    <button data-order="popularity">Popularité</button>
-                    <button data-order="title">Titre</button>
-                </div>
-        `;
-        mainSection.appendChild(menuSection)
-    }
+    // function createDropdownMenuBtn() // Avec Button
+    // {
+    //     menuSection.innerHTML = `
+    //         <label id="menuSelect" class="menuSelect">Trier par :</label>
+    //             <div class="js-select">
+    //                 <button id="current-order">Popularité</button> */Masquer avec display none/*
+    //                 <div id="options-order"> */Afficher avec display block/*
+    //                 <button data-order="date">Date</button>
+    //                 <button data-order="popularity">Popularité</button>
+    //                 <button data-order="title">Titre</button>
+    //             </div>
+    //     `;
+    //     mainSection.appendChild(menuSection)
+    // }
 
-    function sort(type) // En parametre le data.media et le type
+    function sort(value) // En parametre le data.media et le type
     {
             /* Avec switch */
-        switch(type) 
+        switch(value) 
         {
-            case 'likes':  // si (type.likes === 'value1')
-            console.log("trie like");
-            
-            break;
-            case 'date':  // si (type.date === 'value2')
-            console.log("trie date");
+            case 'likes':
+                /* Trier par "likes" */
+                media.sort((a, b) => b.likes - a.likes);
+                // const likesCounter = media;
+                // const byValue = (a,b) => b.likes - a.likes;
+                // const sorted = [...likesCounter].sort(byValue);
+                console.table(media.sort);
+                console.log("trie like");
+                
+                break;
 
-            break;
+            case 'date':
+                /* Trier par "date" */
+                const dateSort = media.slice().sort((a, b) => b.date - a.date)
+                console.log("trie date");
+
+                break;
 
             case 'title':
                 console.log("trie titre");
-        }
-            
-            /* Trier par "likes" */
-            const likesCounter = media;
-            const byValue = (a,b) => b.likes - a.likes;
-            const sorted = [...likesCounter].sort(byValue);
-            // console.table(sorted);
+                /* Trier par "title" */
 
-            /* Trier par "date" */
-
-            const dateSort = media.slice().sort((a, b) => b.date - a.date);
-            // console.table(dateSort);
-
-            /* Trier par "title" */
-
-            // function titleSort(media)
-            {
-                return media.sort(function(x, y)
-    
+                function titleSort(media)
                 {
-                    // console.log(x);
-                    return x.title.localeCompare(y.title);
-                });
-            }
-            titleSort(media);
-
+                    return media.sort(function(a, b)
+                    {
+                        // console.log(x);
+                        return a.title.localeCompare(b.title);
+                    });
+                }
+                titleSort(media);
+        }   
     }
 
   // Afficher le profil du photographe
