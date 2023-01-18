@@ -11,6 +11,7 @@ const getData2 = async () => {
 /* Ex 1 */
 let dataGlobal;
 let media;
+let user;
 
 async function init ()
 {
@@ -18,6 +19,7 @@ async function init ()
     media = dataGlobal.media;
     listenerSort();
     getPhotographersId();
+    createHTMLPhotographer();
     mediaFactory(); 
     sort();
     mediaFactory();
@@ -25,15 +27,14 @@ async function init ()
 
 function getPhotographersId()  
 {
-    
         const params = new URLSearchParams(window.location.search);
         // console.log(params);
         const userId = Number(params.get('id'));
 
         const user = dataGlobal.photographers.find(data => data.id === userId);
         console.log(user);
-            
-        createHTMLPhotographer(user)
+
+        // createHTMLPhotographer(user)
 }
 
 const mainSection = document.querySelector("#main");
@@ -92,7 +93,7 @@ function createItem(media)
         const mediaItem = document.createElement("article");
         const mediaFolder = `/assets/medias/${media.photographerId}`;
         
-        // console.table(mediaFolder); // Faire une condition si "Video" alors...ou "Switch" !?
+        // Faire une condition si "Video" alors...ou "Switch" !?
         
         // if (media.type === "image")
         // {
@@ -117,6 +118,8 @@ function listenerSort()
         select.addEventListener("change", () =>
         {
             sort('date');
+            // console.log(sort);
+            // createItem(); // Dois je recréer les items ?
         });
     }
 
@@ -152,7 +155,7 @@ function listenerSort()
     //     mainSection.appendChild(menuSection)
     // }
 
-    function sort(value) // En parametre le data.media et le type
+    function sort(value) // En parametre le data.media et le type et L'ID !?
     {
             /* Avec switch */
         switch(value) 
@@ -163,7 +166,6 @@ function listenerSort()
                 // const likesCounter = media;
                 // const byValue = (a,b) => b.likes - a.likes;
                 // const sorted = [...likesCounter].sort(byValue);
-                console.table(media.sort);
                 console.log("trie like");
                 
                 break;
@@ -172,6 +174,7 @@ function listenerSort()
                 /* Trier par "date" */
                 const dateSort = media.slice().sort((a, b) => b.date - a.date)
                 console.log("trie date");
+                console.log(media);
 
                 break;
 
