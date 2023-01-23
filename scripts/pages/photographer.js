@@ -16,37 +16,47 @@ let user;
 async function init ()
 {
     dataGlobal = await getData2();
-    media = dataGlobal.media;
-    photographer = dataGlobal.photographer;
-    console.table(photographer);
-    // console.table(dataGlobal.photographers.filter(entry => entry.id === "id"));
+    // media = dataGlobal.media;
+    // photographer = dataGlobal.photographer;
 
-    // user = dataGlobal.photographers.filter(data => data.id === "id");
-    
-    // console.log(dataGlobal.photographers.id);
-
-    // let filteredPhotographers = dataGlobal.photographers.filter(photographer => 
-    //     photographer.id === "id");
-    // console.log(filteredPhotographers);
-
+    mainSection.appendChild(divMediaSection);
     listenerSort();
-    getPhotographersId();
-    // createHTMLPhotographer(photographer);
+    // getPhotographersId();
+    
+    const id = getURLId();
+    const photographer = getPhotographersId(id);
+    media = getPhotographersMedia(id);
+    createHTMLPhotographer(photographer);
     mediaFactory(); 
-    sort();
+    sort(media);
 }
 
-
-function getPhotographersId()  // Compare l'ID de l'URL à celui du tableau photographers.photographe
+function getURLId()
 {
-        const params = new URLSearchParams(window.location.search);
-        // console.log(params);
+    const params = new URLSearchParams(window.location.search);
+        console.log(params);
         const userId = Number(params.get('id'));
-
-        const user = dataGlobal.photographers.find(data => data.id === userId);
-        console.log(userId);
+        return userId
 }
 
+function getPhotographersId(userId)  // Compare l'ID de l'URL à celui du tableau photographers.photographe
+{
+        const user = dataGlobal.photographers.find(data => 
+            data.id === userId);
+        console.log(user);
+        return user;
+}
+
+function getPhotographersMedia(userId)  // Compare l'ID de l'URL à celui du tableau photographers.photographe
+{
+        const medias = dataGlobal.media.filter(data => 
+            data.photographerId === userId);
+        console.log(medias);
+        return medias;
+}
+
+const params = new URLSearchParams(window.location.search);
+const userId = Number(params.get('id'));
 const mainSection = document.querySelector("#main");
 const divMediaSection = document.createElement("media-section");
 divMediaSection.classList.add("media-section");
@@ -60,7 +70,6 @@ function createHTMLPhotographer(photographer)
         const article = document.createElement("article");
         const pictureProfil = `assets/profil/${photographer.portrait}`;
         
-
         article.innerHTML = `
         <h2>${photographer.name}</h2>
         <h1>${photographer.city} ${photographer.country}</h1>
@@ -79,23 +88,11 @@ function createHTMLPhotographer(photographer)
 function mediaFactory()
     
     {
-            const params = new URLSearchParams(window.location.search);
-            const userId = Number(params.get('id'));
-            const user = media.find(data => data.photographerId === userId);
-            console.log(user);
-            const medias = media.filter(data => data.photographerId === userId);
-            // console.log(medias);
-            
-            mainSection.appendChild(divMediaSection);
-            // data.media.forEach(image => {
-            //     createItem(image);
-            // });
-
-                for (const image of medias)
-                {
-                    createItem(image, sort(user));
-                    // console.log(createItem);
-                }
+        divMediaSection.innerHTML = "";
+            for (const image of media) // Pour un tableau et par pour chaque image avec le trie !?
+            {
+                createItem(image);
+            }
     };   
 
 function createItem(media)
@@ -131,12 +128,12 @@ function listenerSort()
             const value = SelectValue.value;
             console.log(value);
             sort(value);
-            // createItem(); // Dois je recréer les items ?
+            mediaFactory();
         });
     }
 
 
-    function createDropdownMenu() // Avec Select
+    function createDropdownMenu()
     {
         
         menuSection.innerHTML = `
@@ -167,7 +164,7 @@ function listenerSort()
     //     mainSection.appendChild(menuSection)
     // }
 
-    function sort(value) // En parametre le type et L'ID !?
+    function sort(value)
     {
             /* Avec switch */
         switch(value) 
@@ -178,7 +175,7 @@ function listenerSort()
                 // const likesCounter = media;
                 // const byValue = (a,b) => b.likes - a.likes;
                 // const sorted = [...likesCounter].sort(byValue);
-                console.log("trie like");
+                console.log("trie like OK");
                 console.table(media);
                 
                 break;
@@ -186,13 +183,13 @@ function listenerSort()
             case 'date':
                 /* Trier par "date" */
                 const dateSort = media.slice().sort((a, b) => b.date - a.date)
-                console.log("trie date");
+                console.log("trie date OK");
                 console.table(media);
 
                 break;
 
             case 'title':
-                console.log("trie titre");
+                
                 /* Trier par "title" */
 
                 function titleSort(media)
@@ -204,6 +201,7 @@ function listenerSort()
                     });
                 }
                 titleSort(media);
+                console.log("trie titre OK");
                 console.table(media);
                 break;
         }   
