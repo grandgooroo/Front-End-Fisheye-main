@@ -172,19 +172,19 @@ function listenerSort()
             case 'likes':
                 /* Trier par "likes" */
                 media.sort((a, b) => b.likes - a.likes);
-                // const likesCounter = media;
-                // const byValue = (a,b) => b.likes - a.likes;
-                // const sorted = [...likesCounter].sort(byValue);
                 console.log("trie like OK");
-                console.table(media);
+                // console.table(media);
                 
                 break;
 
             case 'date':
                 /* Trier par "date" */
-                const dateSort = media.slice().sort((a, b) => b.date - a.date)
+                
+                media.sort((a, b) => {
+                    return new Date(a.date) - new Date(b.date); // descending
+                    })
                 console.log("trie date OK");
-                console.table(media);
+                // console.table(media);
 
                 break;
 
@@ -202,7 +202,7 @@ function listenerSort()
                 }
                 titleSort(media);
                 console.log("trie titre OK");
-                console.table(media);
+                // console.table(media);
                 break;
         }   
     }
