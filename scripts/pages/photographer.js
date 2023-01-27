@@ -1,6 +1,7 @@
-// créer une variable globale
 
 // import * as monModule from '/modules/mon-module.js';
+
+// créer une variable globale
 const getData2 = async () => {
     const response = await fetch("data/photographers.json");
     const data = await response.json();
@@ -8,7 +9,8 @@ const getData2 = async () => {
 
     return data;
     };
-/* Ex 1 */
+
+    /* Datas de photographers.json */
 let dataGlobal;
 let media;
 let user;
@@ -16,22 +18,20 @@ let user;
 async function init ()
 {
     dataGlobal = await getData2();
-    // media = dataGlobal.media;
-    // photographer = dataGlobal.photographer;
-
+    
     mainSection.appendChild(divMediaSection);
     listenerSort();
-    // getPhotographersId();
-    
+
     const id = getURLId();
     const photographer = getPhotographersId(id);
     media = getPhotographersMedia(id);
+
     createHTMLPhotographer(photographer);
-    mediaFactory(); 
+    displayMedia(); 
     sort(media);
 }
 
-function getURLId()
+function getURLId() // Récupére l'ID dans l'URL du profil du photographe
 {
     const params = new URLSearchParams(window.location.search);
         console.log(params);
@@ -47,7 +47,7 @@ function getPhotographersId(userId)  // Compare l'ID de l'URL à celui du tablea
         return user;
 }
 
-function getPhotographersMedia(userId)  // Compare l'ID de l'URL à celui du tableau photographers.photographe
+function getPhotographersMedia(userId)  // Récupère les médias du tableau photographers.media
 {
         const medias = dataGlobal.media.filter(data => 
             data.photographerId === userId);
@@ -63,6 +63,34 @@ divMediaSection.classList.add("media-section");
 const menuSection = document.createElement("dropdown-menu__container");
 menuSection.classList.add("select-menu");
 let changeMenuValue = document.querySelector("#monselect");
+
+/// Test Factory ///
+function factoryMedia(type) // Prend en paramètre le type de média : image ou vidéo
+{
+    const {id, photographerId, title, image, video, date, price} = media;
+    const mediaFolder = `/assets/medias/${media.photographerId}`;
+
+    function createMediaType(type)
+        {
+            switch(type)
+            {
+                case 'image': 
+
+                    //logique//
+                    mediaItem.innerHTML = `img src="${mediaFolder}/${media.image}" alt="Image de ${media.name}" class="img">
+                    `;
+                    return new image(options);
+
+                case 'video':
+                    mediaItem.innerHTML = `source src="${mediaFolder}/${media.video}" alt="Image de ${media.name}" class="img">
+                    `;
+                return new video(options);
+            }
+            return {id, photographerId, title, image, video, date, price}
+        }
+}
+
+/// Test ///
 
 function createHTMLPhotographer(photographer) 
     {
@@ -80,18 +108,17 @@ function createHTMLPhotographer(photographer)
         const image = document.createElement("img");
         image.src = `assets/medias/${photographer.name}`;
 
-        // article.innerHTML = `<img src=""></img>`
-
         photographersSection.appendChild(article)
     };  
 
-function mediaFactory()
+function displayMedia()
     
     {
         divMediaSection.innerHTML = "";
-            for (const image of media) // Pour un tableau et par pour chaque image avec le trie !?
+            for (const image of media)
             {
                 createItem(image);
+                factoryMedia(media);
             }
     };   
 
@@ -100,15 +127,8 @@ function createItem(media)
         const mediaItem = document.createElement("article");
         const mediaFolder = `/assets/medias/${media.photographerId}`;
         
-        // Faire une condition si "Video" alors...ou "Switch" !?
+        // Faire une condition si "Video" alors...ou "Switch"
         
-        // if (media.type === "image")
-        // {
-        //     mediaElement = document.createElement("img");
-        // } else if (media.type === "video");
-        //     {
-        //         mediaElement = document.createElement("video");
-        //     }
         mediaItem.innerHTML = `
             <h2>${media.photographerId}</h2>
             <p>${media.title}</p>
@@ -128,7 +148,7 @@ function listenerSort()
             const value = SelectValue.value;
             console.log(value);
             sort(value);
-            mediaFactory();
+            displayMedia();
         });
     }
 
