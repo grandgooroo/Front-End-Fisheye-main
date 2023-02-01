@@ -93,6 +93,29 @@ img {
     background-color: rgb(229, 229, 229);
 }
 
+video {
+    height: 200px;
+    width: 200px;
+    max-block-size: 200px;
+    border-radius: 5px;
+    object-fit: cover;
+    padding: 5px;
+    background-color: rgb(146, 173, 198);
+}
+
+.likes-section {
+display: flex;
+justify-content: space-around;
+align-items: center;
+position: fixed;
+bottom: 0;
+right: 0px;
+background-color: #db8876;
+width: 25rem;
+height: 4rem;
+border-radius: 5px 5px 0px 0px;
+}
+
 form {
     display: flex;
     width: 100%;

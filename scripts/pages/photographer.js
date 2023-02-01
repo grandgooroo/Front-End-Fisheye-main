@@ -14,6 +14,8 @@ const getData2 = async () => {
 let dataGlobal;
 let media;
 let user;
+let likes;
+let sum;
 
 async function init ()
 {
@@ -29,6 +31,13 @@ async function init ()
     createHTMLPhotographer(photographer);
     displayMedia(); 
     sort(media);
+    factoryCountLikesDOM(media);
+    
+    const like = getPhotographersLikes(id);
+    // console.log(like);
+    const sum = countLikes(like);
+
+    
 }
 
 function getURLId() // Récupére l'ID dans l'URL du profil du photographe
@@ -41,19 +50,35 @@ function getURLId() // Récupére l'ID dans l'URL du profil du photographe
 
 function getPhotographersId(userId)  // Compare l'ID de l'URL à celui du tableau photographers.photographe
 {
-        const user = dataGlobal.photographers.find(data => 
-            data.id === userId);
-        console.log(user);
-        return user;
+    const user = dataGlobal.photographers.find(data => 
+        data.id === userId);
+    console.table(user);
+    return user;
 }
 
 function getPhotographersMedia(userId)  // Récupère les médias du tableau photographers.media
 {
-        const medias = dataGlobal.media.filter(data => 
-            data.photographerId === userId);
-        console.log(medias);
-        return medias;
+    const medias = dataGlobal.media.filter(data => 
+        data.photographerId === userId);
+    // console.log(medias);
+    return medias;
 }
+
+function getPhotographersLikes(id)
+{
+    let filteredMedia = dataGlobal.media.filter(m => m.photographerId === id);
+    let likes = filteredMedia.map(m => m.likes);
+    return likes;
+}
+
+ // Add function sum Likes
+function countLikes(like)
+    {
+        let sum = like.reduce((acc, cur) => acc + cur, 0);
+    console.log(sum); // Total of user likes
+    return sum;
+    }
+    
 
 const params = new URLSearchParams(window.location.search);
 const userId = Number(params.get('id'));
@@ -63,34 +88,81 @@ divMediaSection.classList.add("media-section");
 const menuSection = document.createElement("dropdown-menu__container");
 menuSection.classList.add("select-menu");
 let changeMenuValue = document.querySelector("#monselect");
+const image = document.createElement("img");
+const video = document.createElement("video");
 
-/// Test Factory ///
-function factoryMedia(type) // Prend en paramètre le type de média : image ou vidéo
+/// Factory ///
+// Factory Likes //
+
+function factoryCountLikesDOM(media, dataGlobal)
 {
-    const {id, photographerId, title, image, video, date, price} = media;
-    const mediaFolder = `/assets/medias/${media.photographerId}`;
+    const { id, photographerId, title, image, video, likes, date, price } = media;
+    //récup le "Price" de dataGlobal
+    
+    const likesCounterSection = document.createElement("article");
 
-    function createMediaType(type)
-        {
-            switch(type)
-            {
-                case 'image': 
+    divMediaSection.appendChild(likesCounterSection);
 
-                    //logique//
-                    mediaItem.innerHTML = `img src="${mediaFolder}/${media.image}" alt="Image de ${media.name}" class="img">
-                    `;
-                    return new image(options);
-
-                case 'video':
-                    mediaItem.innerHTML = `source src="${mediaFolder}/${media.video}" alt="Image de ${media.name}" class="img">
-                    `;
-                return new video(options);
-            }
-            return {id, photographerId, title, image, video, date, price}
-        }
+    likesCounterSection.innerHTML = `
+        <div class="likes-section">
+                    <div>    
+                        <span>Likes ${sum}</span><i class="fas fa-heart"></i>
+                    </div>
+                    <div>
+                        <p>${photographer.price}€/jour></p>
+                    </div>
+                </div>
+        `;
 }
 
-/// Test ///
+function factoryMedia(media, type) // Prend en paramètre le type de média : image ou vidéo
+{
+    const {id, photographerId, title, image, video, likes, date, price} = media;
+    const mediaItem = document.createElement("article");
+    const mediaFolder = `/assets/medias/${media.photographerId}`;
+    divMediaSection.appendChild(mediaItem);
+    
+    // console.log(media.image);
+    // console.log(mediaFolder);
+
+    if (image)
+        {
+            mediaItem.innerHTML = `
+                <!-- <h2>${media.photographerId}</h2> -->
+                <p>${media.title}</p><span>${media.likes}</span>
+                <img src="${mediaFolder}/${media.image}" alt="Image de ${media.name}" class="img"></img>
+                `;
+            
+        } else
+        {
+            mediaItem.innerHTML = `
+                <p>${media.title}</p>
+                <video src="${mediaFolder}/${media.video}" alt="Image de ${media.name}" type=video/mp4 class="video"></video>
+            `;
+            // console.log("video");
+        }
+
+    // switch(type)
+    // {
+    //     case 'image': 
+
+    //         //logique//
+    //         mediaItem.innerHTML = `
+    //         <h2>${media.photographerId}</h2>
+    //         <p>${media.title}</p>
+    //         <img src="${mediaFolder}/${media.image}" alt="Image de ${media.name}" class="img">
+    //         `;
+    //         return new image();
+
+    //     case 'video':
+    //         mediaItem.innerHTML = `<source src="${mediaFolder}/${media.video}" alt="Image de ${media.name}" class="img">
+    //         `;
+    //         return new video();
+    // }
+    // return {id, photographerId, title, image, video, date, price}
+}
+
+/// Factory End ///
 
 function createHTMLPhotographer(photographer) 
     {
@@ -105,7 +177,7 @@ function createHTMLPhotographer(photographer)
         <img src=${pictureProfil}></img>
         `;
 
-        const image = document.createElement("img");
+        // const image = document.createElement("img");
         image.src = `assets/medias/${photographer.name}`;
 
         photographersSection.appendChild(article)
@@ -115,10 +187,11 @@ function displayMedia()
     
     {
         divMediaSection.innerHTML = "";
+
             for (const image of media)
             {
-                createItem(image);
-                factoryMedia(media);
+                // createItem(image);
+                factoryMedia(image, video);
             }
     };   
 
