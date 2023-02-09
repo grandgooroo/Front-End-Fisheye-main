@@ -116,6 +116,13 @@ height: 4rem;
 border-radius: 5px 5px 0px 0px;
 }
 
+.btn-likes {
+    color: rgb(84, 84, 84);
+}
+.btn-likes-red {
+    color: #901C1C;
+}
+
 form {
     display: flex;
     width: 100%;
@@ -141,4 +148,16 @@ form input {
     height: 68px;
     border: none;
     border-radius: 5px;
+}
+
+#lightbox-body {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    background-color: rgba(26, 39, 156, 0.4);
+    visibility: visible;
 }

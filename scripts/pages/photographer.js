@@ -12,10 +12,12 @@ const getData2 = async () => {
 /* Datas de photographers.json */
 let dataGlobal;
 let media;
+let mediaId;
 let user;
 let like;
 let sum;
 let price;
+let addLike;
 
 async function init() {
   dataGlobal = await getData2();
@@ -26,18 +28,14 @@ async function init() {
   const id = getURLId();
   const photographer = getPhotographersId(id);
   media = getPhotographersMedia(id);
-
-  createHTMLPhotographer(photographer);
-  // photographerFactory(photographer);
-
-  displayMedia();
-  sort(media);
-
+  mediaId = getMediaId(id);
   like = getPhotographersLikes(id);
   sum = countLikes(like);
   price = getPrice(id);
 
-
+  createHTMLPhotographer(photographer);
+  displayMedia();
+  sort(media);
   factoryCountLikesDOM(media, photographer, sum);
 }
 
@@ -63,6 +61,12 @@ function getPhotographersMedia(userId) {
   );
   // console.log(medias);
   return medias;
+}
+
+function getMediaId(id) {
+  const filterMediaId = dataGlobal.media.filter((data) => data.photographerId === id);
+  let mediaId = filterMediaId.map((media) => media.id);
+  return mediaId;
 }
 
 function getPhotographersLikes(id) {
@@ -122,29 +126,52 @@ function factoryCountLikesDOM(media, photographer, sum) {
 function factoryMedia(media, type) {
   // Prend en paramètre le type de média : image ou vidéo
   const { id, photographerId, title, image, video, likes, date, price } = media;
-  const mediaItem = document.createElement("article");
   const mediaFolder = `/assets/medias/${media.photographerId}`;
+  const mediaItem = document.createElement("article");
+
   divMediaSection.appendChild(mediaItem);
 
-  // console.log(media.image);
-  // console.log(mediaFolder);
+  mediaItem.id = 'img-id-' + media.id; // currentTarget.dataSet.id ?
+  let buttonId = mediaItem.id;
 
-  if (image) {
-    mediaItem.innerHTML = `
-                <!-- <h2>${media.photographerId}</h2> -->
-                <p>${media.title}</p><span>${media.likes}</span>
-                <img src="${mediaFolder}/${media.image}" alt="Image de ${media.name}" class="img"></img>
-                <div class="likes">
-                <button id="like" onclick="incrementLikes()"><i class="fas fa-heart"></i></button></div>
-                `;
-  } else {
-    mediaItem.innerHTML = `
-                <p>${media.title}</p>
-                <video src="${mediaFolder}/${media.video}" alt="Image de ${media.name}" type=video/mp4 class="video"></video>
-                <div class="likes"><i class="fas fa-heart"></i></div>
-            `;
-    // console.log("video");
-  }
+  // Condition type of media
+  
+    if (image) {
+      mediaItem.innerHTML = `
+                  <!-- <h2>${media.photographerId}</h2> -->
+                  <p>${media.title}</p><span>${media.likes}</span>
+                  <img src="${mediaFolder}/${media.image}" alt="Image de ${media.name}" class="img"></img>
+                  <div class="likes">
+                  <button id="${buttonId}" type="button" class="btn-likes"><i class="fas fa-heart"></i></button></div>
+                  `;
+    } else {
+      mediaItem.innerHTML = `
+                  <p>${media.title}</p>
+                  <video src="${mediaFolder}/${media.video}" alt="Image de ${media.name}" type=video/mp4 class="video"></video>
+                  <div class="likes">
+                  <button id="${buttonId}" type="button" class="btn-likes"><i class="fas fa-heart"></i></div>
+              `;
+      // console.log("video");
+    }
+
+    // Increment Like Envent
+    let clickCount = 0;
+    const buttonIncrementLike = mediaItem.querySelector("button");
+
+    buttonIncrementLike.addEventListener("click", function() {
+      if (mediaItem.id === buttonId && clickCount < 1) { 
+        media.likes += 1;
+        mediaItem.querySelector("span").innerHTML = media.likes;
+        
+        buttonIncrementLike.classList.remove("btn-likes");
+        buttonIncrementLike.classList.add("btn-likes-red");
+
+        buttonIncrementLike.disabled = true; // pour empecher de liker encore une fois apres le trie ?
+
+        clickCount++;
+        console.log("plus");
+      }
+    });
 
   // switch(type)
   // {
@@ -166,21 +193,36 @@ function factoryMedia(media, type) {
   // return {id, photographerId, title, image, video, date, price}
 }
 
-function incrementLikes() {
-  
-  let count = like;
-  const likesButton = document.querySelectorAll("#like");
+// Test refacto mediaFactory avec incrémentation des likes
 
-  // Add click event to button
-  
-  for (let button of likesButton) 
-  {
-    button.addEventListener("click", () => {
-      count++;
-    });
-  }
-  console.log(count);
-}
+// function factoryMedia2(media, type, addLikes) {
+//   // Prend en paramètre le type de média : image ou vidéo
+//   const { id, photographerId, title, image, video, likes, date, price } = media;
+//   const mediaItem = document.createElement("article");
+//   const mediaFolder = `/assets/medias/${media.photographerId}`;
+//   divMediaSection.appendChild(mediaItem);
+
+//   // console.log(media.image);
+//   // console.log(mediaFolder);
+
+//   if (image) {
+//     mediaItem.innerHTML = `
+//                 <!-- <h2>${media.photographerId}</h2> -->
+//                 <p>${media.title}</p><span>${media.likes}</span>
+//                 <img src="${mediaFolder}/${media.image}" alt="Image de ${media.name}" class="img"></img>
+//                 <div class="likes">
+//                 <button id="like" onclick="incrementLikes()"><i class="fas fa-heart"></i></button></div>
+//                 `;
+//   } else {
+//     mediaItem.innerHTML = `
+//                 <p>${media.title}</p>
+//                 <video src="${mediaFolder}/${media.video}" alt="Image de ${media.name}" type=video/mp4 class="video"></video>
+//                 <div class="likes"><i class="fas fa-heart"></i></div>
+//             `;
+//     // console.log("video");
+//   }
+// }
+
 // Pour creer l'affichage des profils
 
 // function photographerFactory(photographer) // La paire Key/value serra remplie par les Datas.
@@ -230,26 +272,8 @@ function displayMedia() {
   divMediaSection.innerHTML = "";
 
   for (const image of media) {
-    // createItem(image);
-    factoryMedia(image, video, incrementLikes());
-    ;
+    factoryMedia(image, video);
   }
-}
-
-function createItem(media) {
-  const mediaItem = document.createElement("article");
-  const mediaFolder = `/assets/medias/${media.photographerId}`;
-
-  // Faire une condition si "Video" alors...ou "Switch"
-
-  mediaItem.innerHTML = `
-            <h2>${media.photographerId}</h2>
-            <h2>${media.title}</h2>
-            <img src="${mediaFolder}/${media.image}" alt="Image de ${media.name}" class="img">
-            <div class="likes"><i class="fas fa-heart"></i></div>
-        `;
-
-  divMediaSection.appendChild(mediaItem);
 }
 
 function listenerSort() {
@@ -293,6 +317,7 @@ function createDropdownMenu() {
 //     mainSection.appendChild(menuSection)
 // }
 
+// Sort Media by Date, Title, Popularity
 function sort(value) {
   /* Avec switch */
   switch (value) {
@@ -330,6 +355,26 @@ function sort(value) {
       break;
   }
 }
+
+// LightBox Prototype
+
+// Launch LightBox event
+
+// mediaItem.forEach((mediaItem) => mediaItem.addEventListener("click", openLightbox));
+
+// // Launch modal LightBox
+// function openLightbox() {
+  // const nbSlide = mediaItem.lenght;
+  // const btnLeft = ;
+  // const btnRight =;
+// const divLightboxContainer = document.createElement("div");
+// divLightboxContainer.style.display = "block"; // Masquer pour clore la lightB
+// divLightboxContainer.className = "lightbox-body";
+// divLightboxContainer.innerHTML = `
+// <p>Toto</p>
+// `
+// }
+
 
 // Afficher le profil du photographe
 
