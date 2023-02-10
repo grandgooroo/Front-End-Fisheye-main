@@ -96,11 +96,13 @@ divMediaSection.classList.add("media-section");
 const menuSection = document.createElement("dropdown-menu__container");
 menuSection.classList.add("select-menu");
 let changeMenuValue = document.querySelector("#monselect");
+
 const image = document.createElement("img");
 const video = document.createElement("video");
 
+
 /// Factory ///
-// Factory Likes //
+  // Factory Likes //
 
 function factoryCountLikesDOM(media, photographer, sum) {
   const { id, photographerId, title, image, video, likes, date, price } = media;
@@ -123,7 +125,7 @@ function factoryCountLikesDOM(media, photographer, sum) {
         `;
 }
 
-function factoryMedia(media, type) {
+function factoryMedia(media, type, sum) {
   // Prend en paramètre le type de média : image ou vidéo
   const { id, photographerId, title, image, video, likes, date, price } = media;
   const mediaFolder = `/assets/medias/${media.photographerId}`;
@@ -160,7 +162,12 @@ function factoryMedia(media, type) {
 
     buttonIncrementLike.addEventListener("click", function() {
       if (mediaItem.id === buttonId && clickCount < 1) { 
-        media.likes += 1;
+        media.likes += 1, // sum += 1;
+
+        sum = countLikes(like);
+        sum++;
+        console.log(sum);
+        
         mediaItem.querySelector("span").innerHTML = media.likes;
         
         buttonIncrementLike.classList.remove("btn-likes");
@@ -192,6 +199,26 @@ function factoryMedia(media, type) {
   // }
   // return {id, photographerId, title, image, video, date, price}
 }
+
+// LightBox Prototype
+
+// Launch LightBox event
+// function lightbox() {
+//   mediaItem.forEach((mediaItem) => mediaItem.addEventListener("click", openLightbox));
+
+//   // Launch modal LightBox
+//   function openLightbox() {
+//     const nbSlide = mediaItem.lenght;
+//     // const btnLeft = ;
+//     // const btnRight =;
+//   const divLightboxContainer = document.createElement("div");
+//   divLightboxContainer.style.display = "block"; // Masquer pour clore la lightB
+//   divLightboxContainer.className = "lightbox-body";
+//   divLightboxContainer.innerHTML = `
+//   <p>Toto</p>
+//   `
+//   }
+// }
 
 // Test refacto mediaFactory avec incrémentation des likes
 
@@ -268,11 +295,13 @@ function createHTMLPhotographer(photographer) {
   photographersSection.appendChild(article);
 }
 
+// Display medias items into Photographer page
 function displayMedia() {
   divMediaSection.innerHTML = "";
 
   for (const image of media) {
     factoryMedia(image, video);
+    // lightbox();
   }
 }
 
@@ -355,25 +384,6 @@ function sort(value) {
       break;
   }
 }
-
-// LightBox Prototype
-
-// Launch LightBox event
-
-// mediaItem.forEach((mediaItem) => mediaItem.addEventListener("click", openLightbox));
-
-// // Launch modal LightBox
-// function openLightbox() {
-  // const nbSlide = mediaItem.lenght;
-  // const btnLeft = ;
-  // const btnRight =;
-// const divLightboxContainer = document.createElement("div");
-// divLightboxContainer.style.display = "block"; // Masquer pour clore la lightB
-// divLightboxContainer.className = "lightbox-body";
-// divLightboxContainer.innerHTML = `
-// <p>Toto</p>
-// `
-// }
 
 
 // Afficher le profil du photographe
