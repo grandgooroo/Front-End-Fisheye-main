@@ -325,14 +325,14 @@ photographerService.init().then(() => {
     photographerService.createDropDownMenu();
     photographerService.listenerSort();
 
-    // for (const media of photographerService.media) {
-    //   const medias = photographerService.createMedia(media);
-    //   console.log(media);
-    //   // Appeler la méthode "render" pour afficher chaque élément dans le DOM
-    //   const mediaItem = medias.render();
-    //   console.log(mediaItem);
-    //   // Ajouter l'élément au DOM
-    //   document.querySelector('.media-list').appendChild(mediaItem);
-    // }
+    for (const media of photographerService.media) {
+      const medias = photographerService.createMedia(media);
+      console.log(media);
+      // Appeler la méthode "render" pour afficher chaque élément dans le DOM
+      const mediaItem = medias.render();
+      console.log(mediaItem);
+      // Ajouter l'élément au DOM
+      document.querySelector('.media-list').appendChild(mediaItem);
+    }
   });
 });
