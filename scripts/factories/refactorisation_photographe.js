@@ -61,7 +61,7 @@ class PhotographerService {
   }
 
   // Creation du menu de trie
-  creatDropDownMenu() {
+  createDropDownMenu() {
     const mainSection = document.querySelector("#main");
     const menuSection = document.createElement("dropdown-menu__container");
     menuSection.classList.add("select-menu");
@@ -88,13 +88,13 @@ class PhotographerService {
       console.log("You selected: ", SelectValue.value);
       const value = SelectValue.value;
       console.log(value);
-      sort(value);
+      this.sort(value, this.media);
       // displayMedia();
     });
   }
 
   // Sort Media by Date, Title, Popularity
-  sort(value) {
+  sort(value, media) {
     /* Avec switch */
     switch (value) {
       case "likes":
@@ -173,17 +173,16 @@ class PhotographerService {
 }
 
 class Media {
-  constructor(mediaData) {
-    this.id = mediaData.id;
-    this.photographerId = mediaData.photographerId;
-    this.title = mediaData.title;
-    this.likes = mediaData.likes;
-    this.date = mediaData.date;
-    this.price = mediaData.price;
+  constructor(media) {
+    this.id = media.id;
+    this.photographerId = media.photographerId;
+    this.title = media.title;
+    this.likes = media.likes;
+    this.date = media.date;
+    this.price = media.price;
   }
 
   createArticle() {
-    
     // Create and add elements to mediaItem here:
     const titleEl = document.createElement("h3");
     titleEl.innerText = this.title;
@@ -312,31 +311,38 @@ class Photographer {
 } 
 
 // Appel de la factory
+
 // const photographerService = new PhotographerService();
 
-// photographerService.init().then(() => {
-//   photographerService.getUserAndMediasFromURL().then(() => {
-    
-//     forEach(media => {
-//       const medias = this.createMedia(media);
-//       console.log(media);
-//       // Appeler la méthode "render" pour afficher chaque élément dans le DOM
-//       const mediaItem = medias.render();
-//       console.log(mediaItem);
-//       // Ajouter l'élément au DOM
-//       document.querySelector('.media-list').appendChild(mediaItem);
-//     });
-//   });
-// });
+// photographerService.init();
+// photographerService.getUserAndMediasFromURL();
+// photographerService.createDropDownMenu();
+// photographerService.listenerSort();
+
+// const mediaSection = document.querySelector("#media");
+// for (const media of photographerService.media) {
+//   const medias = photographerService.createMedia(media);
+//   console.table(medias);
+//   const mediaItem = medias.render();
+//   mediaSection.appendChild(mediaItem);
+// }
 
 const photographerService = new PhotographerService();
-photographerService.init();
-photographerService.getUserAndMediasFromURL();
-photographerService.creatDropDownMenu();
-photographerService.listenerSort();
 
-const mediaSection = document.querySelector("#media");
-for (const media of photographerService.media) {
-  const mediaItem = photographerService.createMedia(media);
-  mediaSection.appendChild(mediaItem);
-}
+photographerService.init().then(() => {
+  photographerService.getUserAndMediasFromURL().then(() => {
+    console.log(photographerService.getUserAndMediasFromURL)
+    photographerService.createDropDownMenu();
+    photographerService.listenerSort();
+    
+    for (const media of photographerService.media) {
+      const medias = photographerService.createMedia(media);
+      console.log(media);
+      // Appeler la méthode "render" pour afficher chaque élément dans le DOM
+      const mediaItem = medias.render();
+      console.log(mediaItem);
+      // Ajouter l'élément au DOM
+      document.querySelector('.media-list').appendChild(mediaItem);
+    }
+  });
+});
