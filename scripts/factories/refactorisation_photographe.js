@@ -89,7 +89,6 @@ class PhotographerService {
       const value = SelectValue.value;
       console.log(value);
       this.sort(value, this.media);
-      // displayMedia();
     });
   }
 
@@ -194,9 +193,9 @@ class Media {
 }
 
 class ImageMedia extends Media {
-  constructor(mediaData) {
-    super(mediaData);
-    this.image = mediaData.image;
+  constructor(media) {
+    super(media);
+    this.image = media.image;
   }
 
   render() {
@@ -261,15 +260,17 @@ class LikesCounter {
   }
 }
 
-// Profil du photographe
-class ProfilPhotographer {
-  constructor(photographer) {
-    const pictureProfil = `assets/profil/${photographer.portrait}`;
-    this.name = photographer.name;
-    this.city = photographer.city;
-    this.tagline = photographer.tagline;
+// Classe pour le profil des photographes pour le Header et la page Index.html
+class Photographer {
+  constructor(photographers) {
+    const { name, id, city, country, tagline, price, portrait } = photographers;
+    this.id = id;
+    this.name = name;
+    this.city = city;
+    this.country = country;
+    this.tagline = tagline;
     this.pictureProfil = pictureProfil;
-    this.id = photographer.id;
+    const pictureProfil = `assets/profil/${portrait}`;
   }
 
   render() {
@@ -297,17 +298,6 @@ class ProfilPhotographer {
 
     photographersSection.appendChild(article);
   }
-}
-
-// Classe pour les photographes pour le Header et la page Index.html
-class Photographer {
-  constructor(photographerData) {
-    this.id = photographerData.id;
-    this.name = photographerData.name;
-    this.city = photographerData.city;
-    this.country = photographerData.country;
-    this.tagline = photographerData
-  }
 } 
 
 // Appel de la factory
@@ -328,21 +318,21 @@ class Photographer {
 // }
 
 const photographerService = new PhotographerService();
+// const photographerHeader = new Photographer();
 
 photographerService.init().then(() => {
   photographerService.getUserAndMediasFromURL().then(() => {
-    console.log(photographerService.getUserAndMediasFromURL)
     photographerService.createDropDownMenu();
     photographerService.listenerSort();
-    
-    for (const media of photographerService.media) {
-      const medias = photographerService.createMedia(media);
-      console.log(media);
-      // Appeler la méthode "render" pour afficher chaque élément dans le DOM
-      const mediaItem = medias.render();
-      console.log(mediaItem);
-      // Ajouter l'élément au DOM
-      document.querySelector('.media-list').appendChild(mediaItem);
-    }
+
+    // for (const media of photographerService.media) {
+    //   const medias = photographerService.createMedia(media);
+    //   console.log(media);
+    //   // Appeler la méthode "render" pour afficher chaque élément dans le DOM
+    //   const mediaItem = medias.render();
+    //   console.log(mediaItem);
+    //   // Ajouter l'élément au DOM
+    //   document.querySelector('.media-list').appendChild(mediaItem);
+    // }
   });
 });
