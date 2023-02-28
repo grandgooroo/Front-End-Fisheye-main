@@ -3,7 +3,7 @@ class PhotographerService {
     this.jsonFile = "data/photographers.json";
     this.photographers = [];
     this.user = null;
-    this.media = [];
+    this.medias = [];
   }
 
   // Transforme la reponse json en data et data et décomposé en var photographers et media
@@ -11,15 +11,9 @@ class PhotographerService {
     const response = await fetch(this.jsonFile);
     const data = await response.json();
     this.photographers = data.photographers;
-    this.media = data.media;
-    console.log(this.photographers);
-    console.log(this.media);
-
-    // Global DOM container
-    const mainSection = document.querySelector("#main");
-    const divMediaSection = document.createElement("media-section");
-    divMediaSection.classList.add("media-section");
-    mainSection.appendChild(divMediaSection);
+    this.medias = data.media;
+    // console.log(this.photographers);
+    // console.log(this.medias);
   }
   
   // Récupérer l'URL de la page courante
@@ -37,12 +31,12 @@ class PhotographerService {
 
   // Filtre l'ID (Clé = photographerId) du photographe dans la section Media du JSon
   getPhotographerMedias(userId) { 
-    return this.media.filter((media) => media.photographerId === userId);
+    return this.medias.filter((media) => media.photographerId === userId);
   }
 
   // Récup l'ID du media
   getMediaId(id) {
-    return this.media.filter((photographers) => photographers.photographerId === id);
+    return this.medias.filter((photographers) => photographers.photographerId === id);
   }
 
   async getUserAndMedias(userId) {
@@ -50,8 +44,22 @@ class PhotographerService {
     this.user = this.getPhotographerId(userId);
     console.log(this.user);
     // Récupérer les médias associés à cet utilisateur
-    this.media = await this.getPhotographerMedias(userId);
-    console.table(this.media)
+    this.medias = await this.getPhotographerMedias(userId);
+    // console.table(this.medias)
+
+    // Triez les médias par défaut (par popularité)
+    this.sort("likes", this.medias);
+
+    // Affichez les médias triés
+    console.table(this.medias);
+
+    // Créer le menu de tri
+    this.createDropDownMenu();
+
+    // Mettre en place l'écouteur sur le menu déroulant
+    this.listenerSort();
+    console.table(this.medias);
+
   }
 
   async getUserAndMediasFromURL() {
@@ -88,57 +96,46 @@ class PhotographerService {
       console.log("You selected: ", SelectValue.value);
       const value = SelectValue.value;
       console.log(value);
-      this.sort(value, this.media);
+      this.sort(value, this.medias);
     });
   }
 
   // Sort Media by Date, Title, Popularity
-  sort(value, media) {
+  sort(value) {
     /* Avec switch */
     switch (value) {
       case "likes":
         /* Trier par "likes" */
-        media.sort((a, b) => b.likes - a.likes);
+        this.medias.sort((a, b) => b.likes - a.likes);
         console.log("trie like OK");
         // console.table(media);
-
         break;
 
       case "date":
         /* Trier par "date" */
 
-        media.sort((a, b) => {
-          return new Date(a.date) - new Date(b.date); // descending
-        });
+        this.medias.sort((a, b) => new Date(a.date) - new Date(b.date));
         console.log("trie date OK");
-        // console.table(media);
-
         break;
+        // console.table(media);
 
       case "title":
         /* Trier par "title" */
 
-        function titleSort(media) {
-          return media.sort(function (a, b) {
-            // console.log(x);
-            return a.title.localeCompare(b.title);
-          });
-        }
-        titleSort(media);
-        console.log("trie titre OK");
-        // console.table(media);
-        break;
+        this.medias.sort((a, b) => a.title.localeCompare(b.title));
+      break;
     }
   }
 
   // Ajoute +1 Like sur le media cliqué
-  incrementLike() {
+  incrementLike(mediaItem) {
     let clickCount = 0;
     const buttonIncrementLike = mediaItem.querySelector("button");
+    
 
     buttonIncrementLike.addEventListener("click", function() {
       if (mediaItem.id === buttonId && clickCount < 1) { 
-        media.likes += 1, // sum += 1;
+        this.medias.likes += 1, // sum += 1;
 
         sum = countLikes(like);
         sum++;
@@ -162,9 +159,9 @@ class PhotographerService {
     const { id, photographerId, title, image, video, likes, date, price } = media;
 
     if (image) {
-      return new ImageMedia();
+      return new ImageMedia(media);
     } else if (video) {
-      return new VideoMedia();
+      return new VideoMedia(media);
     } else {
       throw new Error("Media type not supported");
     }
@@ -196,44 +193,58 @@ class ImageMedia extends Media {
   constructor(media) {
     super(media);
     this.image = media.image;
+    this.divMediaSection = document.createElement("media-section");
+    this.mainSection = document.querySelector("#main");
+    this.mediaItem = document.createElement("article");
   }
 
   render() {
     const mediaFolder = `/assets/medias/${this.photographerId}`;
-    const mediaItem = document.createElement("article");
-    mediaItem.classList.add("media-item");
-    mediaItem.id = 'img-id-' + this.id;
-    let buttonId = mediaItem.id;
-    mediaItem.innerHTML = `
+
+    this.divMediaSection.classList.add("media-section");
+    this.mainSection.appendChild(this.divMediaSection);
+    this.mediaItem.classList.add("media-item");
+    this.mediaItem.id = 'img-id-' + this.id;
+
+    let buttonId = this.mediaItem.id;
+    this.mediaItem.innerHTML = `
       <p>${this.title}</p><span>${this.likes}</span>
+      <a href="">
       <img src="${mediaFolder}/${this.image}" alt="Image de ${this.name}" class="img"></img>
+      </a>
       <div class="likes">
       <button id="${buttonId}" type="button" class="btn-likes"><i class="fas fa-heart"></i></button></div>
     `;
 
-    divMediaSection.appendChild(mediaItem);
-    return mediaItem;
+    this.divMediaSection.appendChild(this.mediaItem);
+    return this.mediaItem;
   }
 }
 
 class VideoMedia extends Media {
-  constructor(mediaData) {
-    super(mediaData);
-    this.video = mediaData.video;
+  constructor(media) {
+    super(media);
+    this.video = media.video;
+    this.divMediaSection = document.createElement("media-section");
+    this.mainSection = document.querySelector("#main");
+    this.mediaItem = document.createElement("article");
   }
 
   render() {
     const mediaFolder = `/assets/medias/${this.photographerId}`;
-    const mediaItem = document.createElement("article");
-    mediaItem.id = 'vid-id-' + this.id;
-    let buttonId = mediaItem.id;
-    mediaItem.innerHTML = `
+
+    this.divMediaSection.classList.add("media-section");
+    this.mainSection.appendChild(this.divMediaSection);
+    this.mediaItem.id = 'vid-id-' + this.id;
+
+    let buttonId = this.mediaItem.id;
+    this.mediaItem.innerHTML = `
       <p>${this.title}</p>
       <video src="${mediaFolder}/${this.video}" alt="Image de ${this.name}" type=video/mp4 class="video"></video>
       <div class="likes">
       <button id="${buttonId}" type="button" class="btn-likes"><i class="fas fa-heart"></i></button></div>
     `;
-    return mediaItem;
+    return this.mediaItem;
   }
 }
 
@@ -302,37 +313,22 @@ class Photographer {
 
 // Appel de la factory
 
-// const photographerService = new PhotographerService();
-
-// photographerService.init();
-// photographerService.getUserAndMediasFromURL();
-// photographerService.createDropDownMenu();
-// photographerService.listenerSort();
-
-// const mediaSection = document.querySelector("#media");
-// for (const media of photographerService.media) {
-//   const medias = photographerService.createMedia(media);
-//   console.table(medias);
-//   const mediaItem = medias.render();
-//   mediaSection.appendChild(mediaItem);
-// }
-
 const photographerService = new PhotographerService();
 // const photographerHeader = new Photographer();
 
 photographerService.init().then(() => {
   photographerService.getUserAndMediasFromURL().then(() => {
-    photographerService.createDropDownMenu();
-    photographerService.listenerSort();
+    // photographerService.createDropDownMenu();
+    // photographerService.listenerSort();
+    // photographerService.sort();
 
-    for (const media of photographerService.media) {
-      const medias = photographerService.createMedia(media);
-      console.log(media);
+    for (const media of photographerService.medias) {
+      const mediaItem = photographerService.createMedia(media);
+
       // Appeler la méthode "render" pour afficher chaque élément dans le DOM
-      const mediaItem = medias.render();
-      console.log(mediaItem);
+      const mediaItemRender = mediaItem.render(media);
       // Ajouter l'élément au DOM
-      document.querySelector('.media-list').appendChild(mediaItem);
+      document.querySelector("media-section").appendChild(mediaItemRender);
     }
   });
 });
