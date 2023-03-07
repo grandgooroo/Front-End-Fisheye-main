@@ -14,59 +14,98 @@ class PhotographerService {
     this.medias = data.media;
     // console.log(this.photographers);
     // console.log(this.medias);
+    await this.getUserAndMediasFromURL();
+
+    // Créer le menu de tri
+    this.createDropDownMenu();
+    // Mettre en place l'écouteur sur le menu déroulant
+    this.listenerSort();
+    this.mainSection = document.querySelector("#main");
+    this.divMediaSection = document.createElement("div");
+    this.divMediaSection.classList.add("media-section");
+    this.mainSection.appendChild(this.divMediaSection);
+    
+
+    // Header
+    this.PhotographerProfil(this.user);
+    // this.incrementLikes();
+    this.countLikesDOM();
   }
-  
-  // Récupérer l'URL de la page courante
+
+  // Récupère l'ID de l'utilisateur à partir de l'URL de la page courante
   getURLId() {
     const params = new URLSearchParams(window.location.search);
-    console.log(params);
+    // console.log(params);
     const userId = Number(params.get("id"));
     return userId;
-  } 
-
-  // Récup l'ID du photographe dans le JSON
-  getPhotographerId(userId) { 
-    return this.photographers.find((photographers) => photographers.id === userId);
   }
 
-  // Filtre l'ID (Clé = photographerId) du photographe dans la section Media du JSon
-  getPhotographerMedias(userId) { 
+  // Récup l'ID de l'utilisateur de l'OBJ photographe dans le JSON
+  getPhotographerId(userId) {
+    return this.photographers.find(
+      (photographers) => photographers.id === userId
+    );
+  }
+
+  // getPhotographerId(userId) {
+  //   const photographer = this.photographers.find(
+  //     (photographer) => photographer.id === userId
+  //   );
+  //   photographer.likes = [];
+  //   return photographer;
+  // }
+
+  // Filtre l'ID (Clé = photographerId) et retourne un nouveau tableau de la section Media du JSon de ce photographe
+  getPhotographerMedias(userId) {
     return this.medias.filter((media) => media.photographerId === userId);
   }
 
   // Récup l'ID du media
   getMediaId(id) {
-    return this.medias.filter((photographers) => photographers.photographerId === id);
+    return this.medias.filter(
+      (photographers) => photographers.photographerId === id
+    );
   }
+
+  async getUserData(userId) {
+    this.user = this.getPhotographerId(userId);
+  }
+
+// async photographerData(userId) {
+//   this.user = this.getPhotographerId(userId);
+//   this.data = this.photographers(userId);
+// }
 
   async getUserAndMedias(userId) {
     // Récupérer les données de l'utilisateur correspondant à cet ID
     this.user = this.getPhotographerId(userId);
-    console.log(this.user);
     // Récupérer les médias associés à cet utilisateur
     this.medias = await this.getPhotographerMedias(userId);
-    // console.table(this.medias)
-
     // Triez les médias par défaut (par popularité)
-    this.sort("likes", this.medias);
-
-    // Affichez les médias triés
-    console.table(this.medias);
-
-    // Créer le menu de tri
-    this.createDropDownMenu();
-
-    // Mettre en place l'écouteur sur le menu déroulant
-    this.listenerSort();
-    console.table(this.medias);
-
+    // this.sort("likes", this.medias);
   }
-
+  
   async getUserAndMediasFromURL() {
-    const currentuserId = this.getURLId();
-    console.log(currentuserId);
-    await this.getUserAndMedias(currentuserId);
+    const currentUserId = this.getURLId(); // Recupère l'ID du photographe à partir de l'URL
+    await this.getUserAndMedias(currentUserId); // Données et médias de l'utilisateur correspondant à l'ID de l'URL
   }
+
+// Classe pour le profil des photographes pour le Header et la page Index.html
+  PhotographerProfil() {
+    
+    let photographerSection = document.querySelector(".photographer_section");
+    const article = document.createElement("article");
+    const pictureProfil = `assets/profil/${this.user.portrait}`;
+  
+    article.innerHTML = `
+          <h2>${this.user.name}</h2>
+          <h1>${this.user.city} ${this.user.country}</h1>
+          <h3>${this.user.tagline}</h3>
+          <img src=${pictureProfil}></img>
+          `;
+
+    photographerSection.appendChild(article);
+  } 
 
   // Creation du menu de trie
   createDropDownMenu() {
@@ -88,18 +127,78 @@ class PhotographerService {
     mainSection.appendChild(menuSection);
   }
 
-  // Fonction qui cible le déclancheur du trie sur le menu DropDown
-  listenerSort() {
-    let SelectValue = document.querySelector("#monselect");
+  // Total Likes DOM
+  countLikesDOM() {
+    
+    const likesCounterSection = document.createElement("article");
+
+    likesCounterSection.innerHTML = `
+          <div class="likes-section">
+                      <div>    
+                          <span>${this.countLikes()} </span><i class="fas fa-heart"></i>
+                      </div>
+                      <div>
+                          <p>${this.user.price}€/jour></p>
+                      </div>
+                  </div>
+          `;
+
+    this.mainSection.appendChild(likesCounterSection);
+  }
+
+  // Add function sum Likes
+  countLikes() {
+    return this.medias.reduce((totalLikes, media) => {
+      return totalLikes + media.likes;
+    }, 0);
+  }
+
+  // Increment Like
+  // Fonction qui incrémente le nombre de likes
+  incrementLikes(e) {
+    const mediaId = e.target.getAttribute("data-id");
+    console.log(mediaId);
+    const media = this.medias.find((m) => m.id === parseInt(mediaId));
+    // const media = this.medias.find((m) => m.id === mediaId);
+    console.log(media);
+    media.likes++;
   
-    SelectValue.addEventListener("change", () => {
-      console.log("You selected: ", SelectValue.value);
-      const value = SelectValue.value;
-      console.log(value);
-      this.sort(value, this.medias);
+    this.countLikesDOM();
+  }
+  
+  // Ajouter un écouteur d'événements à tous les boutons de likes
+  addLikesEventListeners() {
+    const likeButtons = document.querySelectorAll(".btn-likes");
+    likeButtons.forEach((button) => {
+      button.addEventListener("click", (e) => {
+        this.incrementLikes(e);
+      });
     });
   }
 
+  // Fonction qui cible le déclancheur du trie sur le menu DropDown
+  listenerSort() {
+    const SelectValue = document.querySelector("#monselect");
+
+    SelectValue.addEventListener("change", () => {
+      console.log("You selected: ", SelectValue.value);
+      const value = SelectValue.value;
+      // console.log(value);
+      this.sort(value, this.medias);
+      // Actualiser le rendu ici ?
+      // console.table(this.medias);
+      // Appeler la fonction RenderMedias ici !?
+      // this.getSortedMedias();
+      this.renderHTML();
+    });
+  }
+
+  getSortedMedias() {
+    this.sort(this.medias);
+    // console.table(this.medias);
+    return this.medias;
+  }
+  
   // Sort Media by Date, Title, Popularity
   sort(value) {
     /* Avec switch */
@@ -107,7 +206,7 @@ class PhotographerService {
       case "likes":
         /* Trier par "likes" */
         this.medias.sort((a, b) => b.likes - a.likes);
-        console.log("trie like OK");
+        console.log("trie Likes OK");
         // console.table(media);
         break;
 
@@ -115,48 +214,40 @@ class PhotographerService {
         /* Trier par "date" */
 
         this.medias.sort((a, b) => new Date(a.date) - new Date(b.date));
-        console.log("trie date OK");
+        console.log("trie Date OK");
         break;
-        // console.table(media);
+      // console.table(media);
 
       case "title":
         /* Trier par "title" */
 
         this.medias.sort((a, b) => a.title.localeCompare(b.title));
-      break;
+        console.log("trie Titres OK");
+        break;
     }
   }
 
-  // Ajoute +1 Like sur le media cliqué
-  incrementLike(mediaItem) {
-    let clickCount = 0;
-    const buttonIncrementLike = mediaItem.querySelector("button");
-    
+  renderHTML() {
+    const sortedMedias = this.getSortedMedias();
+    // console.table(sortedMedias);
+    this.divMediaSection.innerHTML="";
 
-    buttonIncrementLike.addEventListener("click", function() {
-      if (mediaItem.id === buttonId && clickCount < 1) { 
-        this.medias.likes += 1, // sum += 1;
-
-        sum = countLikes(like);
-        sum++;
-        console.log(sum);
-        
-        mediaItem.querySelector("span").innerHTML = media.likes;
-        
-        buttonIncrementLike.classList.remove("btn-likes");
-        buttonIncrementLike.classList.add("btn-likes-red");
-
-        buttonIncrementLike.disabled = true; // pour empecher de liker encore une fois apres le trie ?
-
-        clickCount++;
-        console.log("plus");
-      }
-    });
+    for (const media of sortedMedias) {
+      
+      // Creer les médias
+      const mediaItem = this.createMedia(media);
+      
+      // Appeler la méthode "render" pour afficher chaque élément dans le DOM
+      const mediaItemRender = mediaItem.render(media);
+      // Ajouter l'élément au DOM
+      document.querySelector(".media-section").appendChild(mediaItemRender);
+    } 
   }
 
   // Crée un media en fonction de la nature du média (Image ou Vidéo)
   createMedia(media) {
-    const { id, photographerId, title, image, video, likes, date, price } = media;
+    const { id, photographerId, title, image, video, likes, date, price } =
+      media;
 
     if (image) {
       return new ImageMedia(media);
@@ -183,7 +274,6 @@ class Media {
     const titleEl = document.createElement("h3");
     titleEl.innerText = this.title;
     mediaItem.appendChild(titleEl);
-  
     // Return mediaItem element
     return mediaItem;
   }
@@ -193,18 +283,18 @@ class ImageMedia extends Media {
   constructor(media) {
     super(media);
     this.image = media.image;
-    this.divMediaSection = document.createElement("media-section");
+    // this.divMediaSection = document.createElement("media-section");
     this.mainSection = document.querySelector("#main");
     this.mediaItem = document.createElement("article");
+    this.mediaItem.setAttribute("data-id", `${this.id}`);
+    // this.likeCounter = this.mediaItem.querySelector(".likes-count");
   }
 
   render() {
     const mediaFolder = `/assets/medias/${this.photographerId}`;
 
-    this.divMediaSection.classList.add("media-section");
-    this.mainSection.appendChild(this.divMediaSection);
     this.mediaItem.classList.add("media-item");
-    this.mediaItem.id = 'img-id-' + this.id;
+    this.mediaItem.id = '' + this.id;
 
     let buttonId = this.mediaItem.id;
     this.mediaItem.innerHTML = `
@@ -213,10 +303,9 @@ class ImageMedia extends Media {
       <img src="${mediaFolder}/${this.image}" alt="Image de ${this.name}" class="img"></img>
       </a>
       <div class="likes">
-      <button id="${buttonId}" type="button" class="btn-likes"><i class="fas fa-heart"></i></button></div>
+      <button data-id="${buttonId}" type="button" class="btn-likes"><i class="fas fa-heart"></i></button></div>
     `;
-
-    this.divMediaSection.appendChild(this.mediaItem);
+    
     return this.mediaItem;
   }
 }
@@ -225,7 +314,7 @@ class VideoMedia extends Media {
   constructor(media) {
     super(media);
     this.video = media.video;
-    this.divMediaSection = document.createElement("media-section");
+    // this.divMediaSection = document.createElement("media-section");
     this.mainSection = document.querySelector("#main");
     this.mediaItem = document.createElement("article");
   }
@@ -233,8 +322,8 @@ class VideoMedia extends Media {
   render() {
     const mediaFolder = `/assets/medias/${this.photographerId}`;
 
-    this.divMediaSection.classList.add("media-section");
-    this.mainSection.appendChild(this.divMediaSection);
+    // this.divMediaSection.classList.add("media-section");
+    // this.mainSection.appendChild(this.divMediaSection);
     this.mediaItem.id = 'vid-id-' + this.id;
 
     let buttonId = this.mediaItem.id;
@@ -248,68 +337,25 @@ class VideoMedia extends Media {
   }
 }
 
-// Classe pour les likes
-class LikesCounter {
-  constructor(mediaItems) {
-    this.mediaItems = mediaItems;
-    this.likesCount = mediaItems.reduce((acc, media) => acc + media.likes, 0);
-  }
+// LightBox Prototype
 
-  render() {
-    const likesCounterSection = document.createElement("article");
-    likesCounterSection.innerHTML = `
-      <div class="likes-section">
-        <div>
-          <span>${this.likesCount}</span><i class="fas fa-heart"></i>
-        </div>
-        <div>
-          <p>${this.mediaItems[0].price}€/jour</p>
-        </div>
-      </div>
-    `;
-    return likesCounterSection;
+// Launch LightBox event
+function lightbox() {
+  mediaItem.forEach((media) => media.addEventListener("click", openLightbox));
+
+  // Launch modal LightBox
+  function openLightbox() {
+    const nbSlide = mediaItem.lenght;
+    // const btnLeft = ;
+    // const btnRight =;
+  const divLightboxContainer = document.createElement("div");
+  divLightboxContainer.style.display = "block"; // Masquer pour clore la lightB
+  divLightboxContainer.className = "lightbox-body";
+  divLightboxContainer.innerHTML = `
+  <p>Toto</p>
+  `
   }
 }
-
-// Classe pour le profil des photographes pour le Header et la page Index.html
-class Photographer {
-  constructor(photographers) {
-    const { name, id, city, country, tagline, price, portrait } = photographers;
-    this.id = id;
-    this.name = name;
-    this.city = city;
-    this.country = country;
-    this.tagline = tagline;
-    this.pictureProfil = pictureProfil;
-    const pictureProfil = `assets/profil/${portrait}`;
-  }
-
-  render() {
-    // Récupérer l'ID de l'utilisateur dans l'URL
-    const userId = this.getURLId();
-
-    // Récupérer les données de l'utilisateur correspondant à cet ID
-    const user = this.getPhotographersId(userId);
-
-    // Récupérer les médias associés à cet utilisateur
-    const medias = this.getPhotographersMedia(userId);
-
-    let photographersSection = document.querySelector(".photographer_section");
-    const article = document.createElement("article");
-    const pictureProfil = `assets/profil/${photographer.portrait}`;
-
-    article.innerHTML = `
-          <h2>${photographer.name}</h2>
-          <h1>${photographer.city} ${photographer.country}</h1>
-          <h3>${photographer.tagline}</h3>
-          <img src=${pictureProfil}></img>
-          `;
-
-    image.src = `assets/medias/${photographer.name}`;
-
-    photographersSection.appendChild(article);
-  }
-} 
 
 // Appel de la factory
 
@@ -318,17 +364,10 @@ const photographerService = new PhotographerService();
 
 photographerService.init().then(() => {
   photographerService.getUserAndMediasFromURL().then(() => {
-    // photographerService.createDropDownMenu();
-    // photographerService.listenerSort();
-    // photographerService.sort();
-
-    for (const media of photographerService.medias) {
-      const mediaItem = photographerService.createMedia(media);
-
-      // Appeler la méthode "render" pour afficher chaque élément dans le DOM
-      const mediaItemRender = mediaItem.render(media);
-      // Ajouter l'élément au DOM
-      document.querySelector("media-section").appendChild(mediaItemRender);
-    }
+    photographerService.renderHTML();
+    // photographerService.incrementLike();
+    photographerService.addLikesEventListeners();
+    
   });
 });
+

@@ -83,6 +83,10 @@ select option :hover{
     background-color: rgb(232, 209, 178);
 }
 
+.toto {
+    background-color: chartreuse;
+}
+
 img {
     height: 200px;
     width: 200px;
