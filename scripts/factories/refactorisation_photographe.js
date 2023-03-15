@@ -18,18 +18,17 @@ class PhotographerService {
 
     // Créer le menu de tri
     this.createDropDownMenu();
-    // Mettre en place l'écouteur sur le menu déroulant
+    // Déclare l'écouteur sur le menu déroulant
     this.listenerSort();
     this.mainSection = document.querySelector("#main");
     this.divMediaSection = document.createElement("div");
     this.divMediaSection.classList.add("media-section");
     this.mainSection.appendChild(this.divMediaSection);
-    
-
+    await this.getUserAndMediasFromURL();
+    this.countLikesDOM();
     // Header
     this.PhotographerProfil(this.user);
-    // this.incrementLikes();
-    this.countLikesDOM();
+    // launchLightbox();
   }
 
   // Récupère l'ID de l'utilisateur à partir de l'URL de la page courante
@@ -40,20 +39,12 @@ class PhotographerService {
     return userId;
   }
 
-  // Récup l'ID de l'utilisateur de l'OBJ photographe dans le JSON
+  // Récup l'ID de l'utilisateur de l'OBJ photographers dans le JSON
   getPhotographerId(userId) {
     return this.photographers.find(
       (photographers) => photographers.id === userId
     );
   }
-
-  // getPhotographerId(userId) {
-  //   const photographer = this.photographers.find(
-  //     (photographer) => photographer.id === userId
-  //   );
-  //   photographer.likes = [];
-  //   return photographer;
-  // }
 
   // Filtre l'ID (Clé = photographerId) et retourne un nouveau tableau de la section Media du JSon de ce photographe
   getPhotographerMedias(userId) {
@@ -70,11 +61,6 @@ class PhotographerService {
   async getUserData(userId) {
     this.user = this.getPhotographerId(userId);
   }
-
-// async photographerData(userId) {
-//   this.user = this.getPhotographerId(userId);
-//   this.data = this.photographers(userId);
-// }
 
   async getUserAndMedias(userId) {
     // Récupérer les données de l'utilisateur correspondant à cet ID
@@ -95,13 +81,23 @@ class PhotographerService {
     
     let photographerSection = document.querySelector(".photographer_section");
     const article = document.createElement("article");
+    article.classList.add("container_photographer_profil");
     const pictureProfil = `assets/profil/${this.user.portrait}`;
   
     article.innerHTML = `
-          <h2>${this.user.name}</h2>
-          <h1>${this.user.city} ${this.user.country}</h1>
-          <h3>${this.user.tagline}</h3>
-          <img src=${pictureProfil}></img>
+      <section class="photographer_profil">
+        <div class="text-photographe-profil">
+            <h2>${this.user.name}</h2>
+            <h1>${this.user.city} ${this.user.country}</h1>
+            <h3>${this.user.tagline}</h3>
+        </div>
+        <div>
+        <button class="contact_button" onclick="displayModal()">Contactez-moi</button>
+        </div>
+        <div style="background-color:#1c87c9;">
+            <img src=${pictureProfil}></img>
+        </div>
+      </section>
           `;
 
     photographerSection.appendChild(article);
@@ -110,7 +106,7 @@ class PhotographerService {
   // Creation du menu de trie
   createDropDownMenu() {
     const mainSection = document.querySelector("#main");
-    const menuSection = document.createElement("dropdown-menu__container");
+    const menuSection = document.createElement("dropdown-menu__container"); // remplacer par une div ?
     menuSection.classList.add("select-menu");
     let changeMenuValue = document.querySelector("#monselect");
 
@@ -129,23 +125,20 @@ class PhotographerService {
 
   // Total Likes DOM
   countLikesDOM() {
-    
     const likesCounterSection = document.createElement("article");
-
     likesCounterSection.innerHTML = `
-          <div class="likes-section">
-                      <div>    
-                          <span>${this.countLikes()} </span><i class="fas fa-heart"></i>
-                      </div>
-                      <div>
-                          <p>${this.user.price}€/jour></p>
-                      </div>
-                  </div>
-          `;
-
+      <div class="likes-section">
+        <div class="like-button">
+          <span>${this.countLikes()} </span><i class="fas fa-heart"></i>
+        </div>
+        <div>
+          <p>${this.user.price}€/jour></p>
+        </div>
+      </div>
+    `;
     this.mainSection.appendChild(likesCounterSection);
   }
-
+  
   // Add function sum Likes
   countLikes() {
     return this.medias.reduce((totalLikes, media) => {
@@ -153,28 +146,49 @@ class PhotographerService {
     }, 0);
   }
 
-  // Increment Like
   // Fonction qui incrémente le nombre de likes
-  incrementLikes(e) {
-    const mediaId = e.target.getAttribute("data-id");
-    console.log(mediaId);
-    const media = this.medias.find((m) => m.id === parseInt(mediaId));
+  incrementLikes(event) {
+    const mediaDataId = event.target.parentElement.getAttribute("data-id");// mediaDataId = retroune le data-id de l'item
+    console.log(event.target); // pourquoi le coeur et le target alors que dans HTML c'est le div ?
+    console.log(mediaDataId)
+    const media = this.medias.find((media) => media.id === parseInt(mediaDataId));
     // const media = this.medias.find((m) => m.id === mediaId);
-    console.log(media);
-    media.likes++;
-  
-    this.countLikesDOM();
+    console.log(media.likes);
+    
+    // Condition qui vérifie si la cible a déjà la classe "Liked" sinon l'incrementation de +1 est permise
+    const likeButton = document.querySelector(".likes[data-id]");
+    console.log(likeButton)
+    if (!likeButton.classList.contains("btn-likes-red")) {
+      
+      likeButton.classList.remove("likes")
+
+      event.target.removeEventListener("click", this.incrementLikes);
+      event.target.removeEventListener('click', this.addLikesEventListeners());
+
+      media.likes++;
+      
+      // this.addLikesEventListeners.disabled = true;
+      this.countLikesDOM();
+      likeButton.classList.add("btn-likes-red");
+      
+
+      // event.target.classList.remove("likes");
+    }
+    this.renderHTML(); // Lui qui controle la mise à jour de l'affichage
   }
   
-  // Ajouter un écouteur d'événements à tous les boutons de likes
+  // Ajouter un écouteur d'événements à tous les boutons de likes Peut être ajouté directement dans la méthode "render" ?
   addLikesEventListeners() {
-    const likeButtons = document.querySelectorAll(".btn-likes");
-    likeButtons.forEach((button) => {
-      button.addEventListener("click", (e) => {
-        this.incrementLikes(e);
+    const likeButton = document.querySelectorAll(".likes[data-id]");
+    let likedButton = null;
+    
+    likeButton.forEach((button) => {
+      button.addEventListener("click", (event) => {
+        this.incrementLikes(event);
       });
     });
   }
+  
 
   // Fonction qui cible le déclancheur du trie sur le menu DropDown
   listenerSort() {
@@ -239,9 +253,11 @@ class PhotographerService {
       
       // Appeler la méthode "render" pour afficher chaque élément dans le DOM
       const mediaItemRender = mediaItem.render(media);
+      
       // Ajouter l'élément au DOM
       document.querySelector(".media-section").appendChild(mediaItemRender);
     } 
+    this.addLikesEventListeners();
   }
 
   // Crée un media en fonction de la nature du média (Image ou Vidéo)
@@ -267,6 +283,11 @@ class Media {
     this.likes = media.likes;
     this.date = media.date;
     this.price = media.price;
+    // console.log(this.likes);
+  }
+
+  getLikes() {
+    return this.likes;
   }
 
   createArticle() {
@@ -286,7 +307,6 @@ class ImageMedia extends Media {
     // this.divMediaSection = document.createElement("media-section");
     this.mainSection = document.querySelector("#main");
     this.mediaItem = document.createElement("article");
-    this.mediaItem.setAttribute("data-id", `${this.id}`);
     // this.likeCounter = this.mediaItem.querySelector(".likes-count");
   }
 
@@ -294,18 +314,21 @@ class ImageMedia extends Media {
     const mediaFolder = `/assets/medias/${this.photographerId}`;
 
     this.mediaItem.classList.add("media-item");
+    this.mediaItem.setAttribute("data-id", `${this.id}`);
     this.mediaItem.id = '' + this.id;
 
     let buttonId = this.mediaItem.id;
     this.mediaItem.innerHTML = `
       <p>${this.title}</p><span>${this.likes}</span>
       <a href="">
-      <img src="${mediaFolder}/${this.image}" alt="Image de ${this.name}" class="img"></img>
+      <img src="${mediaFolder}/${this.image}" alt="Image de ${this.name}" class="img" data-id="${buttonId}"></img>
       </a>
-      <div class="likes">
-      <button data-id="${buttonId}" type="button" class="btn-likes"><i class="fas fa-heart"></i></button></div>
+      <div class="likes" data-id="${buttonId}">
+      <i class="fas fa-heart"></i>
+      </div>
+      <!-- <button class="btn-likes"><i class="fas fa-heart"></i></button></div>-->
     `;
-    
+    // console.log(this.mediaItem);
     return this.mediaItem;
   }
 }
@@ -337,37 +360,96 @@ class VideoMedia extends Media {
   }
 }
 
-// LightBox Prototype
+// LightBox
 
-// Launch LightBox event
-function lightbox() {
-  mediaItem.forEach((media) => media.addEventListener("click", openLightbox));
+// class Lightbox {
 
-  // Launch modal LightBox
-  function openLightbox() {
-    const nbSlide = mediaItem.lenght;
-    // const btnLeft = ;
-    // const btnRight =;
-  const divLightboxContainer = document.createElement("div");
-  divLightboxContainer.style.display = "block"; // Masquer pour clore la lightB
-  divLightboxContainer.className = "lightbox-body";
-  divLightboxContainer.innerHTML = `
-  <p>Toto</p>
+//     constructor(medias) {
+//       this.currentElement = null;
+//       this.medias = medias;
+//     }
+
+//     show(id) {
+//       console.log(id);
+//       this.currentMedia = this.medias(id);
+//     }
+
+//     next() {
+
+//     }
+
+//     previous() {
+      
+//     }
+
+//     manageEvent() {
+      
+//     }
+    
+//     getElementById(id) {
+//       return this.currentMedia.find(medias => medias.id = id);
+//     }
+      
+// }
+
+function eventlightbox(userId) {
+  const mediaElements = document.querySelectorAll(".img");
+  console.log(mediaElements);
+  mediaElements.forEach(mediaItem => {
+    mediaItem.addEventListener("click", (event) => {
+      event.preventDefault();
+      
+      console.log("toto a cliqué sur une image !")
+      // Récupérez l'URL de l'image ou de la vidéo
+      const mediaUrl = mediaElements.find((img) => img.dataId === userId);
+      console.log(mediaUrl)
+      // Affichez la Lightbox avec l'élément sélectionné
+      launchLightbox(mediaUrl);
+    })
+  });
+}
+
+// Affichez la Lightbox avec l'élément sélectionné
+function launchLightbox(mediaUrl) {
+  const mediaFolder = `/assets/medias/${this.photographerId}`;
+  // Créez un élément "div" pour la Lightbox
+  const lightbox = document.createElement("div");
+  // const lightboxBg = document.querySelector(".bground");
+  lightbox.classList.add("lightbox");
+  lightbox.style.display = "block"; // Masquer pour clore la lightB
+  lightbox.className = "lightbox";
+  lightbox.innerHTML = `
+    <div class="bground">
+      <button class="lightbox__close"></button>
+      <button class="lightbox__next"></button>
+      <button class="lightbox__prev"></button>
+        <div class="lightbox__container">
+          <img src="${mediaFolder}/${this.image}" alt="Image de ${this.name}" class="img">
+          </img>
+            <p>Toto</p>
+        </div>
+    </div>
   `
-  }
+  console.log("block")
+  // Ajoutez la Lightbox à la page
+  document.body.appendChild(lightbox);
 }
 
 // Appel de la factory
 
 const photographerService = new PhotographerService();
-// const photographerHeader = new Photographer();
 
 photographerService.init().then(() => {
   photographerService.getUserAndMediasFromURL().then(() => {
     photographerService.renderHTML();
     // photographerService.incrementLike();
     photographerService.addLikesEventListeners();
-    
+
+    // let lightbox = new Lightbox();
+    // console.log(lightbox)
+    //   lightbox.getUserAndMediasFromURL();
+    eventlightbox();
   });
 });
+
 

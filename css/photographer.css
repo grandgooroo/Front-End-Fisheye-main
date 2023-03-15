@@ -10,6 +10,24 @@
     margin-right: auto;
 }
 
+.container_photographer_profil {
+    display: flex;
+    width: 100%;
+    background-color: crimson;
+}
+
+.photographer_profil {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin: 10px 10px 10px 10px;
+    background-color: rgb(183, 206, 90);
+}
+
+.text-photographe-profil {
+    width: 200px;
+}
+
 .contact_button {
     font-size: 20px;
     font-weight: bold;
@@ -59,11 +77,30 @@
     background-color: #bba5a5;
 }
 
+.js-select {
+    appearance: none;
+    width: 100%;
+    min-width: 15ch;
+    max-width: 30ch;
+    border: 1px solid var(--select-border);
+    border-radius: 0.25em;
+    padding: 0.25em 0.5em;
+    font-size: 1.25rem;
+    cursor: pointer;
+    line-height: 1.1;
+    background-color: #fff;
+    background-image: linear-gradient(to top, #f9f9f9, #fff 33%);
+}
+
 #monselect {
+    width: 100%;
     background-color: #901C1C;
     border-radius: 5px;
     border-color: #312E2E;
     color: #ffffff;
+    font-size: 1.25rem;
+    cursor: pointer;
+    line-height: 1.1; 
 }
 
 select option {
@@ -120,11 +157,30 @@ height: 4rem;
 border-radius: 5px 5px 0px 0px;
 }
 
+.likes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    width: 50px;
+    background-color: #70c3b3;
+    border-radius: 50%;
+}
+
 .btn-likes {
+    height:50px;
+    width:50px;
     color: rgb(84, 84, 84);
 }
 .btn-likes-red {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    width: 50px;
     color: #901C1C;
+    background-color: #c0c0c0;
+    border-radius: 50%;
 }
 
 form {
@@ -162,7 +218,7 @@ form input {
     height: 100%;
     width: 100%;
     overflow: auto;
-    background-color: rgba(26, 39, 156, 0.4);
+    background-color: rgba(67, 67, 67, 0.599);
     visibility: visible;
 }
 
@@ -171,14 +227,76 @@ form input {
     visibility:hidden;
 }
 
-#lightbox-body {
+#lightbox {
     position: fixed;
-    z-index: 1;
-    left: 0;
     top: 0;
-    height: 100%;
-    width: 100%;
-    overflow: auto;
-    background-color: rgba(26, 39, 156, 0.4);
+    left: 0;
+    z-index: 1;
+    width: 90%;
+    max-width: 1200px;
+    padding: 15px 8%;
+    margin: 15px auto;
+    background-color: rgb(26, 156, 104);
     visibility: visible;
+}
+
+.lightbox__container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin-right: 50px;
+    margin-left: 50px;
+    background-color: #c0c0c0;
+}
+
+.lightbox__container img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* The Close Button */
+.lightbox__close {
+    border: none;
+    background-color: #70c3b3;
+    color: white;
+    background: url(../assets/images/cross-small.svg) center center / 100% 100%;
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    top: 10px;
+    right: 25px;
+    font-size: 35px;
+    font-weight: bold;
+    z-index: 12;
+}
+
+.lightbox__next,
+.lightbox__prev {
+    border: none;
+    /* background-color: #70c3b3; */
+    background: url(../assets/images/arrow.svg) center center / 100% 100%;
+    width: 40px;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    right: 20px;
+    margin-top: -14px;
+    z-index: 11;
+    cursor: pointer;
+}
+
+.lightbox__next {
+    left: 15px;
+    transform: rotate(180deg);
+}
+
+.lightbox button {
+    opacity: .5;
+    cursor: pointer;
+    transition: opacity .3s;
+}
+
+.lightbox button:hover {
+    opacity: 1;
 }
