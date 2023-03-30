@@ -163,14 +163,16 @@ border-radius: 5px 5px 0px 0px;
     justify-content: center;
     height: 50px;
     width: 50px;
-    background-color: #70c3b3;
     border-radius: 50%;
+}
+
+.likes-count {
+    color:rgb(0, 0, 0);
 }
 
 .btn-likes {
     height:50px;
     width:50px;
-    color: rgb(84, 84, 84);
 }
 .btn-likes-red {
     display: flex;
@@ -179,7 +181,6 @@ border-radius: 5px 5px 0px 0px;
     height: 50px;
     width: 50px;
     color: #901C1C;
-    background-color: #c0c0c0;
     border-radius: 50%;
 }
 
@@ -210,7 +211,8 @@ form input {
     border-radius: 5px;
 }
 
-.bground {
+.lightbox {
+    display: block;
     position: fixed;
     z-index: 1;
     left: 0;
@@ -219,40 +221,44 @@ form input {
     width: 100%;
     overflow: auto;
     background-color: rgba(67, 67, 67, 0.599);
-    visibility: visible;
 }
 
-.bground.none {
+.lightbox.none {
     opacity: 0;
-    visibility:hidden;
+    direction: none;
 }
 
-#lightbox {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1;
-    width: 90%;
-    max-width: 1200px;
-    padding: 15px 8%;
-    margin: 15px auto;
-    background-color: rgb(26, 156, 104);
-    visibility: visible;
+.hidden {
+    display: none;
 }
 
-.lightbox__container {
+.bground {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
-    margin-right: 50px;
-    margin-left: 50px;
-    background-color: #c0c0c0;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    background-color: rgba(54, 54, 54, 0.703);
+}
+
+.media__container {
+    background-color: #901C1C;
 }
 
 .lightbox__container img {
     max-width: 100%;
     height: auto;
+}
+
+.lightbox__img {
+    height: 800px;
+    width: 800px;
+    background-color: #70c3b3;
+    border-radius: 12px;
 }
 
 /* The Close Button */
