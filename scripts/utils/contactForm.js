@@ -8,11 +8,9 @@ function closeModal() {
     modal.style.display = "none";
 }
 
-// Prenom nom email
+// Prenom email
 // Get Form inputs
 const firstName = document.getElementById("firstName");
-const first = document.getElementById("first");
-const Name = document.getElementById("name");
 const nameReg = new RegExp(/^[A-zÀ-ú-']{2,}$/);
 const eMail = document.getElementById("mail");
 const emailReg = new RegExp(/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/);

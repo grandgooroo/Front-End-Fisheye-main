@@ -1,13 +1,17 @@
 // Declaration d'une variable globale pour les Datas.
 
+// import { PhotographerService } from './path/to/photographerService.js';
 
+// const photographerService = new PhotographerService();
+// photographerService.fetchData().then((data) => {
+//   console.log(data);
+// });
 
 async function init ()
 {
     dataGlobal = await getData2();
     console.log(dataGlobal);
 }
-
 
 // Class
 class Photographer {
@@ -62,29 +66,4 @@ class Photographer {
 // Déclarer le chemin des images
 const media = "../assets/Sample Photos";
 
-// LIKES 
-const likeButtons = document.querySelectorAll('.photographer-article-like-icon')
-// Pour tous les boutons coeur
-likeButtons.forEach(function (likeButton) {
-    // je créé un event click
-    likeButton.addEventListener('click', function (event) {
-        // current target : sur quoi j'ai cliqué l'element qui a déclenché l'event donc recuperer tt ce qui a derrière
-        const button = event.currentTarget
-        const counter = button.closest('.photographer-article-like').querySelector('.likes')
-        const totalCounter = document.querySelector('.photographer-nav-like-total')
-        let likes = parseInt(counter.innerText)
-        let totalLikes = parseInt(totalCounter.innerText)
-        if (button.dataset.liked === "1") {
-            button.dataset.liked = "0"
-            likes--
-            totalLikes--
-        } else {
-            button.dataset.liked = "1"
-            likes++
-            totalLikes++
-        }
-        counter.innerText = likes
-        totalCounter.innerText = totalLikes
-    })
-})
 init();
