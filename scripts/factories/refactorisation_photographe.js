@@ -1,3 +1,6 @@
+// Importer la classe Media
+// import Media from './mediaFactory.js';
+
 class PhotographerService { // Export casse le code
   constructor(lightbox = null) {
     this.jsonFile = "data/photographers.json";
@@ -31,6 +34,13 @@ class PhotographerService { // Export casse le code
     this.lightbox = new Lightbox(medias);
   }
 
+  // Filtre l'ID (Clé = photographerId) et retourne un nouveau tableau de la section Media du JSon de ce photographe
+  // getPhotographerMedias(userId) {
+  //   return this.medias
+  //     .filter((media) => media.photographerId === userId)
+  //     .map((mediaData) => new Media(mediaData));
+  // }
+  
   async fetchData() {
     const response = await fetch(this.jsonFile);
     const data = await response.json();
@@ -363,12 +373,12 @@ class ImageMedia extends Media {
     let buttonId = this.mediaItem.id;
     this.mediaItem.innerHTML = `
       <a href="">
-      <img src="${mediaFolder}/${this.image}" alt="Image de ${this.name}" class="img" data-id="${buttonId}"></img>
+        <img src="${mediaFolder}/${this.image}" alt="Image de ${this.name}" class="img" data-id="${buttonId}"></img>
       </a>
       <div class="media-item-txt">
         <p>${this.title}</p><span class="likes-count">${this.likes}</span>
         <div class="likes" data-id="${buttonId}">
-        <i class="fas fa-heart like-icon"></i>
+          <i class="fas fa-heart like-icon"></i>
         </div>
       </div>
     `;
@@ -394,12 +404,14 @@ class VideoMedia extends Media {
 
     let buttonId = this.mediaItem.id;
     this.mediaItem.innerHTML = `
-      <p>${this.title}</p><span class="likes-count">${this.likes}</span>
       <a href="">
-      <video src="${mediaFolder}/${this.video}" alt="Image de ${this.name}" type=video/mp4 class="video" data-id="${buttonId}"></video>
+        <video src="${mediaFolder}/${this.video}" alt="Image de ${this.name}" type=video/mp4 class="video" data-id="${buttonId}"></video>
       </a>
-      <div class="likes" data-id="${buttonId}">
-      <i class="fas fa-heart like-icon"></i>
+      <div class="media-item-txt">
+        <p>${this.title}</p><span class="likes-count">${this.likes}</span>
+        <div class="likes" data-id="${buttonId}">
+          <i class="fas fa-heart like-icon"></i>
+        </div>
       </div>
     `;
     return this.mediaItem;
@@ -450,15 +462,15 @@ class Lightbox {
   displayMedia() {
     if (this.currentMedia.image) {
       this.lightboxImg.innerHTML = `<img src="${PhotographerService.MEDIA_FOLDER}/${this.userId}/${this.currentMedia.image}" alt="Image de ${this.currentMedia.title}" class="lightbox__img"></img>`;
-    } else if (this.currentMedia.type === 'video') {
-      this.lightboxImg.innerHTML = `<video src="${PhotographerService.MEDIA_FOLDER}/${this.userId}/${this.currentMedia.video}" class="lightbox__img" controls></video>`;
+    } else if (this.currentMedia.video) {
+      this.lightboxImg.innerHTML = `<video src="${PhotographerService.MEDIA_FOLDER}/${this.userId}/${this.currentMedia.video}" alt="Image de ${this.currentMedia.title}" class="lightbox__img" controls></video>`;
     }
 
     this.lightboxTitle.textContent = this.currentMedia.title;
     this.lightboxCounter.textContent = `${this.currentIndex + 1} / ${this.medias.length}`;
   }
 
-  next() {
+  previous() {
     if (this.currentIndex === this.medias.length - 1) {
       this.currentIndex = 0;
     } else {
@@ -469,7 +481,7 @@ class Lightbox {
     this.displayMedia();
   }
 
-  previous() {
+  next() {
     if (this.currentIndex === 0) {
       this.currentIndex = this.medias.length - 1;
     } else {
@@ -496,10 +508,10 @@ class Lightbox {
         this.close();
         break;
       case "ArrowRight":
-        this.next();
+        this.previous();
         break;
       case "ArrowLeft":
-        this.previous();
+        this.next();
         break;
       default:
         break;
