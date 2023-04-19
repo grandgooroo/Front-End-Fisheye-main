@@ -25,15 +25,14 @@ h1 {
     margin-left: 100px;
 }
 
-.photographer_section {
+.photographers_section {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 70px;
     margin: 10px 10px 10px 10px;
-    background-color: rgb(214, 233, 227);
 }
 
-.photographer_section article {
+.photographers_section article {
     justify-self: center;
     display: flex;
     justify-content: center;
@@ -43,22 +42,22 @@ h1 {
     margin: 10px;
 }
 
-.photographer_section article h2 {
+.photographers_section article h2 {
     color: #D3573C;
     font-size: 36px;
 }
 
-.photographer_section article h3 {
+.photographers_section article h3 {
     font-weight: 600;
 }
 
-.photographer_section article img {
+.photographers_section article img {
     height: 200px;
     width: 200px;
     max-block-size: 200px;
     border-radius: 50%;
     object-fit: cover;
-    background-color: rgb(229, 229, 229);
+    box-shadow: 0 0 6px rgba(128, 128, 128, 0.7);
     padding: 3px;
 }
 
@@ -69,4 +68,18 @@ h1 {
     /* align-items: center; */
     border-radius: 5px;
     margin: 10px 50px 10px 50px;
+}
+
+input:focus {
+    border-color: blue;
+    outline: none;
+    box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+}
+
+.select__option:focus-within {
+    background-color: #b010ef; 
+
+}    
+.select__option input:focus {
+    background-color: #ff8205; 
 }

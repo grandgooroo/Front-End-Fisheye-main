@@ -1,11 +1,12 @@
 // Importer la classe Media
 // import Media from './mediaFactory.js';
 
-class PhotographerService { // Export casse le code
+export class PhotographerService { 
   constructor(lightbox = null) {
     this.jsonFile = "data/photographers.json";
     this.photographers = [];
     this.user = null;
+    this.dropDownInstance = null;
     this.medias = [];
     this.lightbox = this.lightbox;
   }
@@ -82,7 +83,7 @@ class PhotographerService { // Export casse le code
 
   async getUserData(userId) {
     this.user = this.getPhotographerId(userId); // user
-    console.log(this.user.id)
+    // console.log(this.user.id)
   }
   
   async getUserAndMedias(userId) {
@@ -125,7 +126,7 @@ class PhotographerService { // Export casse le code
         <div>
         <button class="contact_button" onclick="displayModal()">Contactez-moi</button>
         </div>
-        <div style="background-color:#1c87c9;">
+        <div>
             <img src=${pictureProfil}></img>
         </div>
       </section>
@@ -135,24 +136,108 @@ class PhotographerService { // Export casse le code
   } 
 
   // Creation du menu de trie
+
+  // handleClickOutside(event) {
+  //   const button = document.querySelector("nav button");
+  //   const dropdownMenu = document.querySelector(".dropdown-menu");
+  
+  //   // Vérifie si l'élément cliqué est en dehors du menu déroulant et du bouton
+  //   if (!dropdownMenu.contains(event.target) && !button.contains(event.target)) {
+  //     dropdownMenu.classList.remove("open"); // Ferme le menu en retirant la classe "open"
+  //   }
+  // }
+  
+  // handleKeyboardNavigation(event) {
+  //   const dropdownMenu = document.querySelector(".dropdown-menu");
+  //   const menuItems = document.querySelectorAll(".dropdown-menu li");
+  
+  //   if (event.defaultPrevented) {
+  //     return;
+  //   }
+  
+  //   let focusedIndex = -1;
+  
+  //   menuItems.forEach((item, index) => {
+  //     if (item === document.activeElement) {
+  //       focusedIndex = index;
+  //     }
+  //   });
+  
+  //   switch (event.key) {
+  //     case "ArrowDown":
+  //       if (focusedIndex < menuItems.length - 1) {
+  //         menuItems[focusedIndex + 1].focus();
+  //       }
+  //       break;
+  //     case "ArrowUp":
+  //       if (focusedIndex > 0) {
+  //         menuItems[focusedIndex - 1].focus();
+  //       }
+  //       break;
+  //     case "Enter":
+  //       if (focusedIndex !== -1) {
+  //         // Vous pouvez gérer l'action à effectuer ici
+  //       }
+  //       break;
+  //     case "Escape":
+  //       dropdownMenu.classList.remove("open");
+  //       break;
+  //     default:
+  //       return;
+  //   }
+  
+  //   // Annuler le comportement par défaut pour éviter le défilement
+  //   event.preventDefault();
+  // }
+  
+  // handleButtonClick(event) {
+  //   const dropdownMenu = document.querySelector(".dropdown-menu");
+  //   dropdownMenu.classList.toggle("open"); // Ouvre ou ferme le menu en ajoutant ou retirant la classe "open"
+  // }
+  
   createDropDownMenu() {
     const mainSection = document.querySelector("#main");
-    const menuSection = document.createElement("dropdown-menu__container"); // remplacer par une div ?
+    const menuSection = document.createElement("div");
     menuSection.classList.add("select-menu-container");
-    let changeMenuValue = document.querySelector("#monselect");
 
     menuSection.innerHTML = `
-          <label id="menuSelect" class="menu-select">Trier par :</label>
-              <div class="js-select">
-                  <select id="monselect">
-                      <option value="likes" selected>Popularité</option>
-                      <option value="title">Titre</option>
-                      <!-- <option value="date">Date</option>-->
-                  </select>
-              </div>
+      <span>Trier par :</span>
+      <nav class="dropdown">
+        <button class="dropdown-toggle" type="button" aria-haspopup="true" >
+          Popularité
+        </button>
+        <ul class="dropdown-menu" role="listbox" aria-expanded="false">
+          <li role="option" tabindex="0" data-value="likes">Popularité</li>
+          <li role="option" tabindex="0" data-value="title">Titre</li>
+          <li role="option" tabindex="0" data-value="date">Date</li>
+        </ul>
+      </nav>
           `;
     mainSection.appendChild(menuSection);
+    this.initializeDropDown();
+    this.listenerSort();
   }
+
+  initializeDropDown() {
+    const dropDown = document.querySelector('.dropdown');
+    // Assigne l'instance de la classe DropDown à la propriété de classe this.dropDownInstance
+    this.dropDownInstance = new DropDown(dropDown);
+    
+    this.dropDownInstance.element.addEventListener('change', e => {
+      console.log('changed', this.dropDownInstance.value);
+    });
+  
+    this.dropDownInstance.element.addEventListener('opened', e => {
+      console.log('opened', this.dropDownInstance.value);
+    });
+  
+    this.dropDownInstance.element.addEventListener('closed', e => {
+      console.log('closed', this.dropDownInstance.value);
+    });
+  
+    // this.dropDownInstance.toggle();
+  }
+  
 
   // Gestion des Likes
   // Total Likes DOM
@@ -228,21 +313,18 @@ class PhotographerService { // Export casse le code
     });
   }
   
-  // Fonction qui cible le déclancheur du trie sur le menu DropDown
   listenerSort() {
-    const SelectValue = document.querySelector("#monselect");
-
-    SelectValue.addEventListener("change", () => {
-      console.log("You selected: ", SelectValue.value);
-      const value = SelectValue.value;
+    this.dropDownInstance.element.addEventListener("change", () => {
+      console.log("You selected: ", this.dropDownInstance.value);
+      const value = this.dropDownInstance.value;
       this.sort(value, this.medias);
       this.renderHTML(this.user.id, this.lightbox);
     });
   }
-
+  
   getSortedMedias(userId) {
     this.sort(this.medias);
-    console.log(this.medias)
+    // console.log(this.medias)
     return this.medias;
   }
 
@@ -260,10 +342,10 @@ class PhotographerService { // Export casse le code
       case "date":
         /* Trier par "date" */
 
-        // this.medias.sort((a, b) => new Date(a.date) - new Date(b.date));
-        // console.log("trie Date OK");
-        // break;
-      // console.table(media);
+        this.medias.sort((a, b) => new Date(a.date) - new Date(b.date));
+        console.log("trie Date OK");
+        break;
+        // console.table(media);
 
       case "title":
         /* Trier par "title" */
@@ -322,13 +404,86 @@ class PhotographerService { // Export casse le code
       throw new Error("Media type not supported");
     }
   }
+}
 
-  // //  {5
-  // showLightbox(mediaId) {
-  //   const lightbox = new Lightbox(this.medias);
-  //   console.log(this.medias)
-  //   lightbox.launchLightbox(mediaId, this.user.id);
-  // }
+class DropDown {
+  constructor(dropDown) {
+    const [toggler, menu] = dropDown.children;
+    
+    const handleClickOut = e => {
+      if(!dropDown) {
+        return document.removeEventListener('click', handleClickOut);
+      }
+      
+      if(!dropDown.contains(e.target)) {
+        this.toggle(false);
+      }
+    };
+    
+    const setValue = (item) => {
+      const val = item.textContent;
+      const dataValue = item.getAttribute('data-value');
+      toggler.textContent = val;
+      this.value = dataValue;
+      this.toggle(false);
+      dropDown.dispatchEvent(new Event('change'));
+      toggler.focus();
+    }
+    
+    const handleItemKeyDown = (e) => {
+      e.preventDefault();
+  
+      if(e.keyCode === 38 && e.target.previousElementSibling) { // up
+        e.target.previousElementSibling.focus();
+      } else if(e.keyCode === 40 && e.target.nextElementSibling) { // down
+        e.target.nextElementSibling.focus();
+      } else if(e.keyCode === 27) { // escape key
+        this.toggle(false);
+      } else if(e.keyCode === 13 || e.keyCode === 32) { // enter or spacebar key
+        setValue(e.target);
+      }
+    }
+  
+    const handleToggleKeyPress = (e) => {
+      e.preventDefault();
+  
+      if(e.keyCode === 27) { // escape key
+        this.toggle(false);
+      } else if(e.keyCode === 13 || e.keyCode === 32) { // enter or spacebar key
+        this.toggle(true);
+      }
+    }
+    
+    toggler.addEventListener('keydown', handleToggleKeyPress);
+    toggler.addEventListener('click', () => this.toggle());
+    [...menu.children].forEach(item => {
+      item.addEventListener('keydown', handleItemKeyDown);
+      item.addEventListener('click', () => setValue(item));
+    });
+    
+    this.element = dropDown;
+    
+    this.value = toggler.textContent;
+    
+    this.toggle = (expand = null) => {
+      expand = expand === null
+        ? menu.getAttribute('aria-expanded') !== 'true'
+        : expand;
+  
+      menu.setAttribute('aria-expanded', expand);
+      
+      if(expand) {
+        toggler.classList.add('active');
+        menu.children[0].focus();
+        document.addEventListener('click', handleClickOut);
+        dropDown.dispatchEvent(new Event('opened'));
+      } else {
+        toggler.classList.remove('active');
+        dropDown.dispatchEvent(new Event('closed'));
+        document.removeEventListener('click', handleClickOut);
+      }
+    }
+  }
 }
 
 class Media {

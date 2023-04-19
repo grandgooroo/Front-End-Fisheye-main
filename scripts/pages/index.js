@@ -1,6 +1,4 @@
-// Declaration d'une variable globale pour les Datas.
-
-// import { PhotographerService } from './path/to/photographerService.js';
+// import { PhotographerService } from '/scripts/factories/refactorisation_photographe.js';
 
 // const photographerService = new PhotographerService();
 // photographerService.fetchData().then((data) => {
@@ -43,7 +41,7 @@ class Photographer {
   };               
 
   function createHTMLPhotographer(photographer) {
-    let photographersSection = document.querySelector(".photographer_section")
+    let photographersSection = document.querySelector(".photographers_section")
     const pictureProfil = `assets/profil/${photographer.portrait}`;
     const article = document.createElement("article");
 

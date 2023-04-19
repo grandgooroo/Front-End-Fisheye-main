@@ -1,32 +1,54 @@
-#contact_modal {
-    display: none;
+#main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 1400px;
+    border-radius: 5px;
+    margin: 10px 50px 10px 50px;
 }
 
 .photograph-header {
-    display: flex;
-    align-items: center;
-    align-content: center;
-    justify-content: space-between;
-    background-color: #3ed248;
-    height: 300px;
+    display: block;
     width: 100%;
-    margin-left: auto;
-    margin-right: auto;
+    border-radius: 5px;
+    padding: 20px;
+    background-color: #fafafa;
+}
+
+.photographer_section h2 {
+    color: #DB8876;
+}
+
+.photographer_section h3 {
+font-family: 'DM Sans';
+font-style: normal;
+font-weight: 400;
+font-size: 18px;
+line-height: 23px;
+color: #525252;
 }
 
 .container_photographer_profil {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    background-color: crimson;
 }
 
 .photographer_profil {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
     gap: 10px;
-    margin: 10px 10px 10px 10px;
-    background-color: rgb(183, 206, 90);
+    padding: 20px;
+    width: 100%;
+}
+
+.photographer_profil img {
+    height: 200px;
+    width: 200px;
+    max-block-size: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 6px rgba(128, 128, 128, 0.7);
+    padding: 3px;
 }
 
 .text-photographe-profil {
@@ -46,16 +68,27 @@
     cursor: pointer;
 }
 
+#contact_modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(67, 67, 67, 0.599);
+}
+
 .modal {
-    border-radius: 5px;
-    background-color: #DB8876;
-    width: 50%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
+    width: 50%;
+    border-radius: 5px;
+    background-color: #DB8876;
     padding: 35px;
     margin: auto;
+    margin-top: 50px;
 }
 
 .modal header {
@@ -73,6 +106,84 @@
     text-align: center;
 }
 
+/* Refacto DropDoawn menu */
+details.select_container {
+    display: inline-block;
+    width: 150px;
+    border: none;
+    position: relative;
+    color: white;
+}
+
+details.select_container[open] {
+    border-radius: 5px 5px 0px 0px;
+    background-color: #901C1C;
+}
+
+details.select_container summary::after {
+    content: "\00203A";
+    position: absolute;
+    right: 12px;
+    top: calc(50%);
+    transform: translateY(-50%) rotate(90deg);
+    pointer-events: none;
+}
+    
+details.select_container[open] summary::after {
+    content: "\002039";
+}
+    
+details.select_container summary {
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 5px 5px 5px 5px;
+    background: #901C1C;
+    list-style: none;
+}
+    
+details.select_container summary::-webkit-details-marker {
+    display: none;
+}
+    
+details.select_container summary:hover {
+    background: #db8876;
+}
+    
+details.select_container .select {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    border: none;
+    width: 100%;
+    left: 0px;
+    border-radius: 0 0 5px 5px;
+    background: #901C1C;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+    
+details.select_container .select__option {
+    cursor: pointer;
+    padding: 6px 12px;
+}
+
+details.select_container .select:hover .select__option.active {
+    background: #db8876;
+    color: #454545;
+}
+    
+details.select_container .select__option.active,
+details.select_container .select:hover .select__option.active:hover,
+details.select_container .select__option:hover {
+    background: #db8876;
+    color: #fff;
+    border-radius: 5px;
+}
+
+details.select_container .select__option input {
+    display: none;
+}
+
+/* --- */
 .menu-select {
     min-width: 150px;
 }
@@ -80,25 +191,21 @@
 .select-menu-container {
     display: flex;
     align-items: center;
-    height: 30px;
-    width: 150px;
+    height: 50px;
+    width: 100%;
     margin: 3rem 0 3rem 0;
     font-weight: 600;
 }
 
 .js-select {
     appearance: none;
-    width: 100%;
-    min-width: 15ch;
-    max-width: 30ch;
+    width: 150px;
     border: 1px solid var(--select-border);
     border-radius: 0.25em;
-    padding: 0.25em 0.5em;
+    padding: 0.3em 0.3em;
     font-size: 1.25rem;
     cursor: pointer;
     line-height: 1.1;
-    background-color: #fff;
-    background-image: linear-gradient(to top, #f9f9f9, #fff 33%);
 }
 
 #monselect {
@@ -122,31 +229,28 @@ select option :hover{
 
 .media-section {
     display: grid;
-    justify-content: center;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 20px;
+    align-content: center;
+    justify-content: space-between;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    width: 100%;
     color: #901C1C;
     font-weight: 500;
 }
 
-img {
+.media-section img, .media-section video {
     height: 300px;
     width: 250px;
     max-block-size: 200px;
-    border-radius: 5px;
+    border-radius: 10px;
     object-fit: cover;
     padding: 5px;
-    background-color: rgb(229, 229, 229);
+    cursor: pointer;
+    transition: opacity 0.3s;
 }
 
-video {
-    height: 300px;
-    width: 250px;
-    max-block-size: 200px;
-    border-radius: 5px;
-    object-fit: cover;
-    padding: 5px;
-    background-color: rgb(146, 173, 198);
+.media-section img:hover, .media-section video:hover {
+    opacity: 0.7; /* Modifie l'opacité lorsqu'on survole l'image */
 }
 
 .media-item-txt {
@@ -251,7 +355,9 @@ form input {
 }
 
 .media__container {
-    background-color: #901C1C;
+    background-color: #ffffff;
+    padding: 12px;
+    border-radius: 12px;
 }
 
 .lightbox__container img {
@@ -259,11 +365,20 @@ form input {
 }
 
 .lightbox__img {
-    max-width: 100%;
+    max-width: 1100px;
     height: auto;
     object-fit: cover;
     background-color: #ffffff;
     border-radius: 12px;
+}
+
+.lightbox__title {
+    font-weight: 700;
+    color: #901C1C;
+}
+
+.lightbox__counter {
+    color: #901C1C;
 }
 
 /* The Close Button */
@@ -285,7 +400,8 @@ form input {
 .lightbox__next,
 .lightbox__prev {
     border: none;
-    /* background-color: #70c3b3; */
+    color: #901C1C;
+    background-color: #70c3b3;
     background: url(../assets/images/arrow.svg) center center / 100% 100%;
     width: 40px;
     height: 100%;
@@ -306,8 +422,106 @@ form input {
     opacity: .5;
     cursor: pointer;
     transition: opacity .3s;
+    color: #901C1C;
 }
 
 .lightbox button:hover {
     opacity: 1;
+}
+
+input:focus {
+    border-color: blue;
+    outline: none;
+    box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+}
+
+.select__option:focus-within {
+    background-color: #b010ef; 
+
+}    
+.select__option input:focus {
+    background-color: #ff8205; 
+}
+
+/* Nouvelle version Dropdown */
+
+.dropdown {
+    position: relative;
+    cursor: pointer;
+}
+
+.dropdown .dropdown-toggle {
+    appearance: none;
+    background: #901C1C;
+    color: #fff;
+    border: 0;
+    padding: 12px 35px 12px 12px;
+    border-radius: 3px;
+    text-align: left;
+    position: relative;
+    width: 150px;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+    outline: none;
+}
+
+.dropdown .dropdown-toggle::after {
+    content: '';
+    border-width: 6px;
+    border-radius: 3px;
+    border-style: solid;
+    border-color: transparent;
+    border-top-color: inherit;
+    position: absolute;
+    right: 12px;
+    top: calc(50% + 3px);
+    transform: translateY(-50%);
+}
+
+.dropdown .dropdown-toggle.active::after {
+    border-color: transparent;
+    border-bottom-color: inherit;
+    top: calc(50% - 3px);
+}
+
+.dropdown .dropdown-menu {
+    position: absolute;
+    left: 50%;
+    top: 80%;
+    transform: translateX(-50%);
+    background: #901C1C;
+    box-shadow: 0 1px 4px rgba(150, 150, 150, 0.65);
+    list-style: none;
+    padding: 5px 0;
+    margin: 0;
+    max-width: 320px;
+    width: 100%;
+    border-radius: 3px;
+    z-index: 10;
+    visibility: hidden;
+    overflow: auto;
+    max-height: 200px;
+}
+
+.dropdown .dropdown-menu[aria-expanded="true"] {
+    visibility: visible;
+}
+
+.dropdown .dropdown-menu > li {
+    height: 35px;
+    display: block;
+    align-items: center;
+    padding: 10px 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dropdown .dropdown-menu > li:hover,
+.dropdown .dropdown-menu > li:focus {
+    outline: none;
+    background: #f2f2f2;
 }

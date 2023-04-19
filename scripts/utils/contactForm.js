@@ -1,12 +1,20 @@
 function displayModal() {
     const modal = document.getElementById("contact_modal");
 	modal.style.display = "block";
+    modal.removeAttribute('aria-hidden');
+    modal.setAttribute('aria-modal', 'true');
 }
 
 function closeModal() {
     const modal = document.getElementById("contact_modal");
     modal.style.display = "none";
+    modal.setAttribute('aria-hidden', 'true');
+    modal.removeAttribute('aria-modal');
 }
+// Navigation au clavier
+window.addEventListener('keydown', function (event) {
+console.log(event.key)
+})
 
 // Prenom email
 // Get Form inputs
