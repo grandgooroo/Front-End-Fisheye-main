@@ -1,67 +1,83 @@
-function displayModal() {
-    const modal = document.getElementById("contact_modal");
-	modal.style.display = "block";
-    modal.removeAttribute('aria-hidden');
-    modal.setAttribute('aria-modal', 'true');
-}
+export class ContactFormModal {
+    constructor() {
+        this.modal = null;
+        this.mainSection = document.querySelector("#main");
+    }
 
-function closeModal() {
-    const modal = document.getElementById("contact_modal");
-    modal.style.display = "none";
-    modal.setAttribute('aria-hidden', 'true');
-    modal.removeAttribute('aria-modal');
-}
-// Navigation au clavier
-window.addEventListener('keydown', function (event) {
-console.log(event.key)
-})
+    createModalHTML(photographerName) {
+        const modal = document.createElement("div");
+        modal.id = "contact_modal";
+        modal.setAttribute("aria-hidden", "true");
+        modal.setAttribute("role", "modal");
+        modal.setAttribute("aria-modal", "false");
+        modal.innerHTML = `
+        <div class="modal">
+            <header>
+            <h2>Contactez ${photographerName}</h2>
+            <img src="assets/icons/close.svg" class="close-modal" />
+          </header>
+          <form>
+          <div>
+            <label for="first_name">Prénom</label>
+            <input id="first_name" name="first_name" aria-label="Prénom" />
+          </div>
 
-// Prenom email
-// Get Form inputs
-const firstName = document.getElementById("firstName");
-const nameReg = new RegExp(/^[A-zÀ-ú-']{2,}$/);
-const eMail = document.getElementById("mail");
-const emailReg = new RegExp(/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/);
-const msgError = document.getElementsByClassName("msgerror");
+          <div>
+            <label for="name">Nom</label>
+            <input id="name" name="name" aria-label="nom" />
+          </div>
 
-  // First name input
-  // if (firstNameInput.value === "") // Test if first name is empty
-  // {
-  //   createMsgError(firstNameInput, "Le champ Prenom est obligatoire.");
-  //   formIsValid = false;
-  //   console.log(formIsValid);
-  // } else {
+          <div>
+            <label for="email">Adresse e-mail</label>
+            <input id="email" name="email" type="email" aria-label="Adresse e-mail" />
+          </div>
 
-  //   if (!nameReg.test(firstNameInput.value)) // Test if first name match with Regex
-  //   {
-  //     createMsgError(firstNameInput, "Le Prenom doit avoir deux characters minimum.");
-  //     formIsValid = false;  
-  //   } else {}
-  // }
-
-  // // Last name input
-  // if (lastNameInput.value === "") // Test if last Name is empty
-  // {
-  //   createMsgError(lastNameInput, "Le champ Nom est obligatoire.")
-  //   formIsValid = false;
-  // } else {
-
-  //   if (!nameReg.test(lastNameInput.value)) // Test if last name match with Regex
-  //   {
-  //     createMsgError(lastNameInput, "Le Nom doit avoir deux characters minimum.");
-  //     formIsValid = false;
-  //   }
-  // }
-
-  // // Email  input
-  // if (emailInput.value === "") // Test if e-mail is empty
-  // {
-  //   createMsgError(emailInput, "Le champ E-mail est obligatoire.");
-  //   formIsValid = false; 
-  // }
+          <div>
+            <label for="message">Votre message</label>
+            <textarea id="message" name="message" aria-label="Votre message"></textarea>
+          </div>
+          <button class="contact_button" type="submit">Envoyer</button>
+        </form>
+        </div>
+      `;
+      return modal;
+    }
   
-  // else if (!emailReg.test(emailInput.value)) // Test if e-mail match with Regex
-  // {
-  //   createMsgError(emailInput, "Veuillez renseigner une E-mail valide.");
-  //   formIsValid = false;    
-  // }
+    initModal(photographerName) {
+      this.modal = this.createModalHTML(photographerName);
+      document.body.appendChild(this.modal);
+  
+      const closeModalButton = this.modal.querySelector(".close-modal");
+      closeModalButton.addEventListener("click", () => {
+        this.closeModal();
+      });
+  
+      // Écouteur d'événement pour la touche "Escape"
+        window.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+            this.closeModal();
+            }
+        });
+    }
+  
+    displayModal(photographerName) {
+      if (!this.modal) {
+        this.initModal(photographerName);
+      }
+  
+      this.modal.style.display = "block";
+      this.modal.removeAttribute("aria-hidden");
+      this.modal.setAttribute("aria-modal", "true");
+      this.mainSection.setAttribute("aria-hidden", "true");
+    }
+  
+    closeModal() {
+      if (this.modal) {
+        this.modal.style.display = "none";
+        this.modal.setAttribute("aria-hidden", "true");
+        this.modal.removeAttribute("aria-modal");
+        this.mainSection.setAttribute("aria-hidden", "false");
+      }
+    }
+  }
+  

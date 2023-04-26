@@ -13,58 +13,28 @@
     <header>
       <img src="assets/images/logo.png" class="logo" />
     </header>
-    <main id="main">
+    <main id="main" aria-hidden="false">
       <div class="photograph-header">
         <div class="photographer_section">
         </div>
       </div>
-      <div class="lightbox hidden" aria-hidden="true" role="dialog" aria-describedby="lightbox">
-        <div class="bground">
-          <button class="lightbox__close"></button>
-          <button class="lightbox__next"></button>
-          <button class="lightbox__prev"></button>
-            <div class="media__container">
-              <div class="lightbox__img">
-              </div>
-              <div class="lightbox__title"></div>
-              <div class="lightbox__counter"></div>
-            </div>
-        </div>
-      </div>
     </main>
+    <div class="lightbox hidden" aria-hidden="true" role="dialog" aria-describedby="lightbox">
+      <div class="bground">
+        <button class="lightbox__close" tabindex="1"></button>
+        <button class="lightbox__next" tabindex="2"></button>
+        <button class="lightbox__prev" tabindex="3"></button>
+          <div class="media__container">
+            <div class="lightbox__img">
+            </div>
+            <div class="lightbox__title"></div>
+            <div class="lightbox__counter"></div>
+          </div>
+      </div>
+    </div>
+    
     <div id="contact_modal" aria-hidden="true" role="modal" aria-modal="false" aria_labelledby="">
-			<div class="modal">
-				<header>
-          <h2>Contactez-moi</h2>
-          <img src="assets/icons/close.svg" onclick="closeModal()"/>
-        </header>
-				<form>
-					<div>
-						<label>Prénom</label>
-						<input />
-            <H1></H1>
-					</div>
-          <div>
-            <label>Adresse e-mail</label>
-						<input />
-            <H1></H1>
-          </div>
-          <div>
-            <label>Votre message</label>
-						<input />
-            <H1></H1>
-          </div>
-          <button class="contact_button">Envoyer</button>
-				</form>
-			</div>
 		</div>
-    <!-- <script src="/scripts/factories/dataGlobal.js"></script> -->
-    <!-- <script src="/scripts/pages/photographer.js"></script> -->
     <script type="module" src="/scripts/factories/refactorisation_photographe.js"></script>
-    <!-- <script src="/scripts/factories/lightBox.js"></script>  -->
-    <script src="/scripts/utils/contactForm.js"></script>
-    <!-- <script src="/scripts/factories/mediaFactory.js"></script> -->
-    <!-- <script src="/scripts/factories/mediaObj.js"></script> -->
-    <!-- <script src="/scripts/factories/photographers.js"></script> -->
   </body>
 </html>

@@ -1,4 +1,4 @@
-// import { PhotographerService } from '/scripts/factories/refactorisation_photographe.js';
+// import { PhotographerService } from '../factories/refactorisation_photographe.js';
 
 // const photographerService = new PhotographerService();
 // photographerService.fetchData().then((data) => {

@@ -1,5 +1,16 @@
 // Importer la classe Media
-// import Media from './mediaFactory.js';
+// import Media from './scripts/factories/mediaFactory.js';
+import { ContactFormModal } from '../utils/contactForm.js';
+import { DropDown } from '../utils/dropdown.js';
+
+const KEY_CODES = {
+  TAB: 9,
+  ENTER: 13,
+  SPACE: 32,
+  ESCAPE: 27,
+  UP_ARROW: 38,
+  DOWN_ARROW: 40,
+};
 
 export class PhotographerService { 
   constructor(lightbox = null) {
@@ -32,6 +43,7 @@ export class PhotographerService {
     this.countLikesDOM();
     // Header
     this.PhotographerProfil(photographerData);
+    this.contactFormModal = new ContactFormModal();
     this.lightbox = new Lightbox(medias);
   }
 
@@ -110,7 +122,6 @@ export class PhotographerService {
 
 // Classe pour le profil des photographes pour le Header et la page Index.html
   PhotographerProfil() {
-    
     let photographerSection = document.querySelector(".photographer_section");
     const article = document.createElement("article");
     article.classList.add("container_photographer_profil");
@@ -124,7 +135,7 @@ export class PhotographerService {
             <h3>${this.user.tagline}</h3>
         </div>
         <div>
-        <button class="contact_button" onclick="displayModal()">Contactez-moi</button>
+        <button class="contact_button">Contactez-moi</button>
         </div>
         <div>
             <img src=${pictureProfil}></img>
@@ -133,67 +144,12 @@ export class PhotographerService {
           `;
 
     photographerSection.appendChild(article);
+
+    const contactButton = article.querySelector('.contact_button');
+    contactButton.addEventListener("click", () => {
+      this.contactFormModal.displayModal(this.user.name);
+    });
   } 
-
-  // Creation du menu de trie
-
-  // handleClickOutside(event) {
-  //   const button = document.querySelector("nav button");
-  //   const dropdownMenu = document.querySelector(".dropdown-menu");
-  
-  //   // Vérifie si l'élément cliqué est en dehors du menu déroulant et du bouton
-  //   if (!dropdownMenu.contains(event.target) && !button.contains(event.target)) {
-  //     dropdownMenu.classList.remove("open"); // Ferme le menu en retirant la classe "open"
-  //   }
-  // }
-  
-  // handleKeyboardNavigation(event) {
-  //   const dropdownMenu = document.querySelector(".dropdown-menu");
-  //   const menuItems = document.querySelectorAll(".dropdown-menu li");
-  
-  //   if (event.defaultPrevented) {
-  //     return;
-  //   }
-  
-  //   let focusedIndex = -1;
-  
-  //   menuItems.forEach((item, index) => {
-  //     if (item === document.activeElement) {
-  //       focusedIndex = index;
-  //     }
-  //   });
-  
-  //   switch (event.key) {
-  //     case "ArrowDown":
-  //       if (focusedIndex < menuItems.length - 1) {
-  //         menuItems[focusedIndex + 1].focus();
-  //       }
-  //       break;
-  //     case "ArrowUp":
-  //       if (focusedIndex > 0) {
-  //         menuItems[focusedIndex - 1].focus();
-  //       }
-  //       break;
-  //     case "Enter":
-  //       if (focusedIndex !== -1) {
-  //         // Vous pouvez gérer l'action à effectuer ici
-  //       }
-  //       break;
-  //     case "Escape":
-  //       dropdownMenu.classList.remove("open");
-  //       break;
-  //     default:
-  //       return;
-  //   }
-  
-  //   // Annuler le comportement par défaut pour éviter le défilement
-  //   event.preventDefault();
-  // }
-  
-  // handleButtonClick(event) {
-  //   const dropdownMenu = document.querySelector(".dropdown-menu");
-  //   dropdownMenu.classList.toggle("open"); // Ouvre ou ferme le menu en ajoutant ou retirant la classe "open"
-  // }
   
   createDropDownMenu() {
     const mainSection = document.querySelector("#main");
@@ -201,14 +157,14 @@ export class PhotographerService {
     menuSection.classList.add("select-menu-container");
 
     menuSection.innerHTML = `
-      <span>Trier par :</span>
+      <span class="js-select">Trier par :</span>
       <nav class="dropdown">
-        <button class="dropdown-toggle" type="button" aria-haspopup="true" >
+        <button class="dropdown-toggle" type="button" aria-haspopup="true">
           Popularité
         </button>
-        <ul class="dropdown-menu" role="listbox" aria-expanded="false">
-          <li role="option" tabindex="0" data-value="likes">Popularité</li>
-          <li role="option" tabindex="0" data-value="title">Titre</li>
+        <ul class="dropdown-menu" role="listbox" aria-label="menu de trie des médias" aria-expanded="false">
+          <li role="option" tabindex="0" data-value="likes" class="downpdown-menu-border">Popularité</li>
+          <li role="option" tabindex="0" data-value="title" class="downpdown-menu-border">Titre</li>
           <li role="option" tabindex="0" data-value="date">Date</li>
         </ul>
       </nav>
@@ -234,8 +190,6 @@ export class PhotographerService {
     this.dropDownInstance.element.addEventListener('closed', e => {
       console.log('closed', this.dropDownInstance.value);
     });
-  
-    // this.dropDownInstance.toggle();
   }
   
 
@@ -358,7 +312,7 @@ export class PhotographerService {
   }
 
   addEventListenersToMedia(userId, lightbox) {
-    const mediaElements = document.querySelectorAll(".media-item .img, .media-item .video");
+    const mediaElements = document.querySelectorAll(".media-button");
   
     for (const mediaElement of mediaElements) {
       mediaElement.addEventListener("click", (e) => {
@@ -368,7 +322,7 @@ export class PhotographerService {
       });
     }
   }
-
+  
   // Affiche la galerie des médias
   renderHTML(userId) {
     const sortedMedias = this.getSortedMedias();
@@ -406,86 +360,6 @@ export class PhotographerService {
   }
 }
 
-class DropDown {
-  constructor(dropDown) {
-    const [toggler, menu] = dropDown.children;
-    
-    const handleClickOut = e => {
-      if(!dropDown) {
-        return document.removeEventListener('click', handleClickOut);
-      }
-      
-      if(!dropDown.contains(e.target)) {
-        this.toggle(false);
-      }
-    };
-    
-    const setValue = (item) => {
-      const val = item.textContent;
-      const dataValue = item.getAttribute('data-value');
-      toggler.textContent = val;
-      this.value = dataValue;
-      this.toggle(false);
-      dropDown.dispatchEvent(new Event('change'));
-      toggler.focus();
-    }
-    
-    const handleItemKeyDown = (e) => {
-      e.preventDefault();
-  
-      if(e.keyCode === 38 && e.target.previousElementSibling) { // up
-        e.target.previousElementSibling.focus();
-      } else if(e.keyCode === 40 && e.target.nextElementSibling) { // down
-        e.target.nextElementSibling.focus();
-      } else if(e.keyCode === 27) { // escape key
-        this.toggle(false);
-      } else if(e.keyCode === 13 || e.keyCode === 32) { // enter or spacebar key
-        setValue(e.target);
-      }
-    }
-  
-    const handleToggleKeyPress = (e) => {
-      e.preventDefault();
-  
-      if(e.keyCode === 27) { // escape key
-        this.toggle(false);
-      } else if(e.keyCode === 13 || e.keyCode === 32) { // enter or spacebar key
-        this.toggle(true);
-      }
-    }
-    
-    toggler.addEventListener('keydown', handleToggleKeyPress);
-    toggler.addEventListener('click', () => this.toggle());
-    [...menu.children].forEach(item => {
-      item.addEventListener('keydown', handleItemKeyDown);
-      item.addEventListener('click', () => setValue(item));
-    });
-    
-    this.element = dropDown;
-    
-    this.value = toggler.textContent;
-    
-    this.toggle = (expand = null) => {
-      expand = expand === null
-        ? menu.getAttribute('aria-expanded') !== 'true'
-        : expand;
-  
-      menu.setAttribute('aria-expanded', expand);
-      
-      if(expand) {
-        toggler.classList.add('active');
-        menu.children[0].focus();
-        document.addEventListener('click', handleClickOut);
-        dropDown.dispatchEvent(new Event('opened'));
-      } else {
-        toggler.classList.remove('active');
-        dropDown.dispatchEvent(new Event('closed'));
-        document.removeEventListener('click', handleClickOut);
-      }
-    }
-  }
-}
-
 class Media {
   constructor(media) {
     this.id = media.id;
@@ -519,20 +393,20 @@ class ImageMedia extends Media {
 
   render() {
     const mediaFolder = `${PhotographerService.MEDIA_FOLDER}/${this.photographerId}`;
-
+  
     this.mediaItem.classList.add("media-item");
     this.mediaItem.setAttribute("data-id", `${this.id}`);
     this.mediaItem.id = '' + this.id;
     this.likesEl = this.mediaItem.querySelector(".likes-count");
-
-    let buttonId = this.mediaItem.id;
+  
+    let mediaElementId = this.mediaItem.id;
     this.mediaItem.innerHTML = `
-      <a href="">
-        <img src="${mediaFolder}/${this.image}" alt="Image de ${this.name}" class="img" data-id="${buttonId}"></img>
-      </a>
+      <button class="media-button" data-id="${mediaElementId}" tabindex="0">
+        <img src="${mediaFolder}/${this.image}" alt="Image de ${this.name}" class="img" data-id="${mediaElementId}"></img>
+      </button>
       <div class="media-item-txt">
         <p>${this.title}</p><span class="likes-count">${this.likes}</span>
-        <div class="likes" data-id="${buttonId}">
+        <div class="likes" data-id="${mediaElementId}" tabindex="0">
           <i class="fas fa-heart like-icon"></i>
         </div>
       </div>
@@ -557,14 +431,14 @@ class VideoMedia extends Media {
     this.mediaItem.id = '' + this.id;
     this.likesEl = this.mediaItem.querySelector(".likes-count");
 
-    let buttonId = this.mediaItem.id;
+    let mediaElementId = this.mediaItem.id;
     this.mediaItem.innerHTML = `
-      <a href="">
-        <video src="${mediaFolder}/${this.video}" alt="Image de ${this.name}" type=video/mp4 class="video" data-id="${buttonId}"></video>
-      </a>
+      <button class="media-button" data-id="${mediaElementId}" tabindex="0">
+          <video src="${mediaFolder}/${this.video}" alt="Image de ${this.name}" type=video/mp4 class="video" data-id="${mediaElementId}"></video>
+      </button>
       <div class="media-item-txt">
         <p>${this.title}</p><span class="likes-count">${this.likes}</span>
-        <div class="likes" data-id="${buttonId}">
+        <div class="likes" data-id="${mediaElementId}" tabindex="0">
           <i class="fas fa-heart like-icon"></i>
         </div>
       </div>
@@ -586,6 +460,7 @@ class Lightbox {
     this.closeButton = document.querySelector(".lightbox__close");
     this.nextButton = document.querySelector(".lightbox__next");
     this.prevButton = document.querySelector(".lightbox__prev");
+    this.mainSection = document.querySelector("#main");
 
     this.launchLightbox = this.launchLightbox.bind(this);
     this.next = this.next.bind(this);
@@ -612,6 +487,10 @@ class Lightbox {
     document.addEventListener("keydown", this.boundManageKeyboardEvents);
 
     this.lightboxContainer.classList.remove("hidden");
+    // Ajouter ici le aria-hidden du la page "main"
+    this.mainSection.setAttribute('aria-hidden', 'true');
+    console.log(this.mainSection)
+    this.closeButton.focus();
   }
 
   displayMedia() {
@@ -654,12 +533,12 @@ class Lightbox {
     this.nextButton.removeEventListener("click", this.next);
     this.prevButton.removeEventListener("click", this.previous);
     document.removeEventListener("keydown", this.boundManageKeyboardEvents);
+    this.mainSection.setAttribute('aria-hidden', 'false');
   }
 
-
   manageKeyboardEvents(event) {
-    switch (event.key) {
-      case "Escape":
+    switch (event.key) { // propriété qui permet de savoir quel touche est utilisée
+      case "Escape":    // propriétée de l'obj "event"
         this.close();
         break;
       case "ArrowRight":

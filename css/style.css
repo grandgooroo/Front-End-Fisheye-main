@@ -70,11 +70,11 @@ h1 {
     margin: 10px 50px 10px 50px;
 }
 
-input:focus {
+/* input:focus {
     border-color: blue;
     outline: none;
     box-shadow: 0 0 5px rgba(81, 203, 238, 1);
-}
+} */
 
 .select__option:focus-within {
     background-color: #b010ef; 
