@@ -1,67 +1,43 @@
-// import { PhotographerService } from '../factories/refactorisation_photographe.js';
-
-// const photographerService = new PhotographerService();
-// photographerService.fetchData().then((data) => {
-//   console.log(data);
-// });
-
-async function init ()
-{
-    dataGlobal = await getData2();
-    console.log(dataGlobal);
-}
+import { DataService } from '../factories/dataService.js';
 
 // Class
-class Photographer {
-  constructor(name, id, city, country, price, portrait)
-  {
-    this.name = name;
-    this.id = id;
-    this.city = city;
-    this.country = country;
-    this.price = price;
-    this.portrait = portrait;
+class PhotographersList {
+  constructor(jsonFile) {
+    this.jsonFile = jsonFile;
+    this.photographers = [];
   }
-}
-  
-  /* récupérer les photographes*/
-  function getPhotographersData()  
-  {
-    photographersData = fetch("data/photographers.json")
-        .then(resp => resp.json())
-        .then(data => 
-        {
-          
-          for (const photographer of data.photographers)
-          {
-            // UserCardDom
-            createHTMLPhotographer(photographer)
-          }
-        })
-  };               
 
-  function createHTMLPhotographer(photographer) {
-    let photographersSection = document.querySelector(".photographers_section")
+  async init() {
+    const dataService = new DataService(this.jsonFile);
+    const data = await dataService.fetchData();
+    this.photographers = data.photographers;
+
+    // Appeler ici les méthodes pour afficher les photographes sur la page d'accueil
+    this.getPhotographersData(this.photographers);
+  }
+
+  getPhotographersData(photographers) {
+    for (const photographer of photographers) {
+      this.createHTMLPhotographer(photographer);
+    }
+  }
+
+  createHTMLPhotographer(photographer) {
+    let photographersSection = document.querySelector(".photographers_section");
     const pictureProfil = `assets/profil/${photographer.portrait}`;
     const article = document.createElement("article");
 
     article.innerHTML = `
-    <a href="./photographer.html?id=${photographer.id}"><img src=${pictureProfil}></a>
-    <h2>${photographer.name}</h2>
-    <h1>${photographer.city} ${photographer.country}</h1>
-    <h3>${photographer.tagline}</h3>
-    <p>${photographer.price}€/jour</p>
+      <a href="./photographer.html?id=${photographer.id}"><img src=${pictureProfil} alt="${photographer.name}"></a>
+      <h2>${photographer.name}</h2>
+      <h1>${photographer.city} ${photographer.country}</h1>
+      <h3>${photographer.tagline}</h3>
+      <p>${photographer.price}€/jour</p>
     `;
 
-    photographersSection.appendChild(article)
+    photographersSection.appendChild(article);
   }
+}
 
-  // afficher tous le photographes
-  getPhotographersData();  
-
-
-// Gallerie 
-// Déclarer le chemin des images
-const media = "../assets/Sample Photos";
-
-init();
+const photographersList = new PhotographersList("data/photographers.json");
+photographersList.init();

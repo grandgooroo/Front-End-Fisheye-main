@@ -1,7 +1,10 @@
-// Importer la classe Media
-// import Media from './scripts/factories/mediaFactory.js';
+
+import { DataService } from '../factories/dataService.js';
 import { ContactFormModal } from '../utils/contactForm.js';
 import { DropDown } from '../utils/dropdown.js';
+import {Lightbox} from '../factories/lightBox.js';
+import { MEDIA_FOLDER } from '../utils/mediasPath.js';
+console.log(MEDIA_FOLDER); // "assets/medias"
 
 const KEY_CODES = {
   TAB: 9,
@@ -12,7 +15,7 @@ const KEY_CODES = {
   DOWN_ARROW: 40,
 };
 
-export class PhotographerService { 
+class PhotographerService { 
   constructor(lightbox = null) {
     this.jsonFile = "data/photographers.json";
     this.photographers = [];
@@ -24,8 +27,8 @@ export class PhotographerService {
 
   // Transforme la reponse json en data et data et décomposé en var photographers et media
   async init() {
-    const response = await fetch(this.jsonFile);
-    const data = await response.json();
+    const dataService = new DataService(this.jsonFile);
+    const data = await dataService.fetchData();
     this.photographers = data.photographers;
     this.medias = data.media;
 
@@ -62,8 +65,10 @@ export class PhotographerService {
     return data;
   }
 
-  static MEDIA_FOLDER = "assets/medias";
-  
+  getPhotographers() {
+    return this.photographers;
+  }
+
   // Récupère l'ID de l'utilisateur à partir de l'URL de la page courante
   getURLId() {
     const params = new URLSearchParams(window.location.search);
@@ -129,16 +134,16 @@ export class PhotographerService {
   
     article.innerHTML = `
       <section class="photographer_profil">
-        <div class="text-photographe-profil">
+        <div class="text-photographe-profil" tabindex="0">
             <h2>${this.user.name}</h2>
             <h1>${this.user.city} ${this.user.country}</h1>
             <h3>${this.user.tagline}</h3>
         </div>
         <div>
-        <button class="contact_button">Contactez-moi</button>
+        <button class="contact_button" alt="Contact Me">Contactez-moi</button>
         </div>
         <div>
-            <img src=${pictureProfil}></img>
+            <img src=${pictureProfil} alt="${this.user.name}"></img>
         </div>
       </section>
           `;
@@ -159,7 +164,7 @@ export class PhotographerService {
     menuSection.innerHTML = `
       <span class="js-select">Trier par :</span>
       <nav class="dropdown">
-        <button class="dropdown-toggle" type="button" aria-haspopup="true">
+        <button class="dropdown-toggle" type="button" aria-haspopup="true" alt="Order by">
           Popularité
         </button>
         <ul class="dropdown-menu" role="listbox" aria-label="menu de trie des médias" aria-expanded="false">
@@ -192,7 +197,6 @@ export class PhotographerService {
     });
   }
   
-
   // Gestion des Likes
   // Total Likes DOM
   countLikesDOM() {
@@ -218,7 +222,6 @@ export class PhotographerService {
   }
 
   // Fonction qui incrémente le nombre de likes
-  
   incrementLikes = (event) => {
     const mediaDataId = event.currentTarget.getAttribute("data-id");
     const media = this.medias.find((media) => media.id === parseInt(mediaDataId));
@@ -254,14 +257,16 @@ export class PhotographerService {
     console.log(this.lastClickedButton)
   }
   
-  // Ajouter un écouteur d'événements à tous les boutons de likes Peut être ajouté directement dans la méthode "render" ?
   addLikesEventListeners() {
     const likeButtons = document.querySelectorAll(".likes[data-id]");
     likeButtons.forEach((button) => {
-      button.addEventListener("click", (event) => {
-        // this.incrementLikes(event);
-        for (let i = 0; i < likeButtons.length; i++) {
-          likeButtons[i].addEventListener("click", this.incrementLikes);
+      // Ajouter un écouteur d'événement pour le clic
+      button.addEventListener("click", this.incrementLikes);
+  
+      // Ajouter un écouteur d'événement pour la touche "Entrée"
+      button.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.keyCode === 13) {
+          this.incrementLikes(event);
         }
       });
     });
@@ -392,7 +397,7 @@ class ImageMedia extends Media {
   }
 
   render() {
-    const mediaFolder = `${PhotographerService.MEDIA_FOLDER}/${this.photographerId}`;
+    const mediaFolder = `${MEDIA_FOLDER}/${this.photographerId}`;
   
     this.mediaItem.classList.add("media-item");
     this.mediaItem.setAttribute("data-id", `${this.id}`);
@@ -401,8 +406,8 @@ class ImageMedia extends Media {
   
     let mediaElementId = this.mediaItem.id;
     this.mediaItem.innerHTML = `
-      <button class="media-button" data-id="${mediaElementId}" tabindex="0">
-        <img src="${mediaFolder}/${this.image}" alt="Image de ${this.name}" class="img" data-id="${mediaElementId}"></img>
+      <button class="media-button" data-id="${mediaElementId}" tabindex="0" aria-label="${this.title}">
+        <img src="${mediaFolder}/${this.image}" alt="${this.title}" class="img" data-id="${mediaElementId}"></img>
       </button>
       <div class="media-item-txt">
         <p>${this.title}</p><span class="likes-count">${this.likes}</span>
@@ -424,7 +429,7 @@ class VideoMedia extends Media {
   }
 
   render() {
-    const mediaFolder = `${PhotographerService.MEDIA_FOLDER}/${this.photographerId}`;
+    const mediaFolder = `${MEDIA_FOLDER}/${this.photographerId}`;
 
     this.mediaItem.classList.add("media-item");
     this.mediaItem.setAttribute("data-id", `${this.id}`);
@@ -433,11 +438,11 @@ class VideoMedia extends Media {
 
     let mediaElementId = this.mediaItem.id;
     this.mediaItem.innerHTML = `
-      <button class="media-button" data-id="${mediaElementId}" tabindex="0">
-          <video src="${mediaFolder}/${this.video}" alt="Image de ${this.name}" type=video/mp4 class="video" data-id="${mediaElementId}"></video>
+      <button class="media-button" data-id="${mediaElementId}" tabindex="0" aria-label="${this.title}">
+          <video src="${mediaFolder}/${this.video}" alt="${this.title}" type=video/mp4 class="video" data-id="${mediaElementId}"></video>
       </button>
       <div class="media-item-txt">
-        <p>${this.title}</p><span class="likes-count">${this.likes}</span>
+        <p>${this.title}</p><span class="likes-count" aria-label="Likes">${this.likes}</span>
         <div class="likes" data-id="${mediaElementId}" tabindex="0">
           <i class="fas fa-heart like-icon"></i>
         </div>
@@ -446,113 +451,6 @@ class VideoMedia extends Media {
     return this.mediaItem;
   }
 }
-
-// LightBox
-class Lightbox {
-  constructor(medias) {
-    this.medias = medias;
-    this.currentMedia = null;
-    this.currentIndex = 0;
-    this.lightboxContainer = document.querySelector(".lightbox");
-    this.lightboxImg = document.querySelector(".lightbox__img");
-    this.lightboxTitle = document.querySelector(".lightbox__title");
-    this.lightboxCounter = document.querySelector(".lightbox__counter");
-    this.closeButton = document.querySelector(".lightbox__close");
-    this.nextButton = document.querySelector(".lightbox__next");
-    this.prevButton = document.querySelector(".lightbox__prev");
-    this.mainSection = document.querySelector("#main");
-
-    this.launchLightbox = this.launchLightbox.bind(this);
-    this.next = this.next.bind(this);
-    this.previous = this.previous.bind(this);
-    this.close = this.close.bind(this);
-
-    this.boundManageKeyboardEvents = this.manageKeyboardEvents.bind(this);
-  }
-
-  updateMedias(newMedias) {
-    this.medias = [...newMedias];
-  }
-
-  launchLightbox(id, userId) {
-    this.currentMedia = this.medias.find((media) => media.id === parseInt(id));
-    this.currentIndex = this.medias.findIndex((media) => media.id === parseInt(id));
-    this.userId = userId;
-
-    this.displayMedia();
-
-    this.closeButton.addEventListener("click", this.close);
-    this.nextButton.addEventListener("click", this.next);
-    this.prevButton.addEventListener("click", this.previous);
-    document.addEventListener("keydown", this.boundManageKeyboardEvents);
-
-    this.lightboxContainer.classList.remove("hidden");
-    // Ajouter ici le aria-hidden du la page "main"
-    this.mainSection.setAttribute('aria-hidden', 'true');
-    console.log(this.mainSection)
-    this.closeButton.focus();
-  }
-
-  displayMedia() {
-    if (this.currentMedia.image) {
-      this.lightboxImg.innerHTML = `<img src="${PhotographerService.MEDIA_FOLDER}/${this.userId}/${this.currentMedia.image}" alt="Image de ${this.currentMedia.title}" class="lightbox__img"></img>`;
-    } else if (this.currentMedia.video) {
-      this.lightboxImg.innerHTML = `<video src="${PhotographerService.MEDIA_FOLDER}/${this.userId}/${this.currentMedia.video}" alt="Image de ${this.currentMedia.title}" class="lightbox__img" controls></video>`;
-    }
-
-    this.lightboxTitle.textContent = this.currentMedia.title;
-    this.lightboxCounter.textContent = `${this.currentIndex + 1} / ${this.medias.length}`;
-  }
-
-  previous() {
-    if (this.currentIndex === this.medias.length - 1) {
-      this.currentIndex = 0;
-    } else {
-      this.currentIndex++;
-    }
-    this.currentMedia = this.medias[this.currentIndex];
-
-    this.displayMedia();
-  }
-
-  next() {
-    if (this.currentIndex === 0) {
-      this.currentIndex = this.medias.length - 1;
-    } else {
-      this.currentIndex--;
-    }
-    this.currentMedia = this.medias[this.currentIndex];
-
-    this.displayMedia();
-  }
-
-  close() {
-    this.lightboxContainer.classList.add("hidden");
-
-    this.closeButton.removeEventListener("click", this.close);
-    this.nextButton.removeEventListener("click", this.next);
-    this.prevButton.removeEventListener("click", this.previous);
-    document.removeEventListener("keydown", this.boundManageKeyboardEvents);
-    this.mainSection.setAttribute('aria-hidden', 'false');
-  }
-
-  manageKeyboardEvents(event) {
-    switch (event.key) { // propriété qui permet de savoir quel touche est utilisée
-      case "Escape":    // propriétée de l'obj "event"
-        this.close();
-        break;
-      case "ArrowRight":
-        this.previous();
-        break;
-      case "ArrowLeft":
-        this.next();
-        break;
-      default:
-        break;
-    }
-  }
-}
-
 
 // Appel de la factory
 const photographerService = new PhotographerService();
@@ -564,4 +462,3 @@ photographerService.init().then(() => {
     photographerService.addLikesEventListeners();
   });
 });
-

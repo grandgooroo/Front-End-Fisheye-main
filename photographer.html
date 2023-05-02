@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
   <head>
     <link href="css/style.css" rel="stylesheet" type="text/css" />
     <link href="css/style.css" rel="photographer.css" type="text/css" />
@@ -11,7 +11,9 @@
   </head>
   <body>
     <header>
-      <img src="assets/images/logo.png" class="logo" />
+      <a href="index.html">
+        <img src="assets/images/logo.png" class="logo" alt="Logo Fisheye Home page" tabindex="0">
+      </a>
     </header>
     <main id="main" aria-hidden="false">
       <div class="photograph-header">
@@ -20,21 +22,20 @@
       </div>
     </main>
     <div class="lightbox hidden" aria-hidden="true" role="dialog" aria-describedby="lightbox">
-      <div class="bground">
-        <button class="lightbox__close" tabindex="1"></button>
-        <button class="lightbox__next" tabindex="2"></button>
-        <button class="lightbox__prev" tabindex="3"></button>
-          <div class="media__container">
-            <div class="lightbox__img">
+      <div class="bground"> 
+        <section class="lightbox__wrapper">
+          <button class="lightbox__close" tabindex="1" alt="Close dialog"></button>
+          <button class="lightbox__next" tabindex="2" alt="Next image"></button>
+          <button class="lightbox__prev" tabindex="3" alt="Previous image"></button>
+            <div class="media__container" aria-label="image closeup view">
+              <div class="lightbox__img">
+              </div>
+              <div class="lightbox__title"></div>
+              <div class="lightbox__counter"></div>
             </div>
-            <div class="lightbox__title"></div>
-            <div class="lightbox__counter"></div>
-          </div>
+        </section>
       </div>
     </div>
-    
-    <div id="contact_modal" aria-hidden="true" role="modal" aria-modal="false" aria_labelledby="">
-		</div>
     <script type="module" src="/scripts/factories/refactorisation_photographe.js"></script>
   </body>
 </html>

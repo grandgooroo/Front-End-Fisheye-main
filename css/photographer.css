@@ -1,3 +1,8 @@
+body {
+    margin-left: auto;
+    margin-right: auto;
+}
+
 #main {
     display: flex;
     flex-direction: column;
@@ -17,7 +22,9 @@
 }
 
 .photographer_section h2 {
-    color: #DB8876;
+    color: #D3573C;
+
+
 }
 
 .photographer_section h3 {
@@ -68,6 +75,29 @@ color: #525252;
     cursor: pointer;
 }
 
+.contact_button_submit {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    padding: 11px;
+    width: 170px;
+    height: 70px;
+    border: none;
+    background-color: #901C1C;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.contact_button_submit:hover{
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+}
+
+
+.contact_button:focus, .contact_button:hover {
+    color: black;
+    background-color: #DB8876;
+}
+
 #contact_modal {
     display: none;
     position: fixed;
@@ -89,6 +119,12 @@ color: #525252;
     padding: 35px;
     margin: auto;
     margin-top: 50px;
+    animation: fadeIn .3s both;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; }
+    to {opacity: 1;}
 }
 
 .modal header {
@@ -359,7 +395,6 @@ form input {
 
 .lightbox.none {
     opacity: 0;
-    direction: none;
 }
 
 .hidden {
@@ -376,21 +411,28 @@ form input {
     height: 100%;
     width: 100%;
     overflow: auto;
-    background-color: rgba(54, 54, 54, 0.703);
+    background-color: rgba(255, 255, 255, 0.703);
+}
+
+.lightbox__wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(224, 224, 224);
+    height: auto;
+    width: 40%;
 }
 
 .media__container {
     background-color: #ffffff;
     padding: 12px;
     border-radius: 12px;
-}
-
-.lightbox__container img {
-    background-color: #3ed248;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .lightbox__img {
-    max-width: 1100px;
+    max-width: 900px;
     height: auto;
     object-fit: cover;
     background-color: #ffffff;
@@ -425,29 +467,36 @@ form input {
 .lightbox__next,
 .lightbox__prev {
     border: none;
-    color: #901C1C;
-    background-color: #70c3b3;
     background: url(../assets/images/arrow.svg) center center / 100% 100%;
     width: 40px;
-    height: 100%;
-    position: fixed;
-    top: 0;
-    right: 20px;
-    margin-top: -14px;
+    height: 20%;
+    /* position: fixed;
+    top: 40%; */
+    /* right: 500px; */
+    position: absolute;
+    top: 50%;
+    /* transform: translateY(-50%); */
+    /* margin-top: -14px; */
     z-index: 11;
     cursor: pointer;
 }
 
 .lightbox__next {
-    left: 15px;
+    /* left: 15px; */
+    left: calc(20% - 30px);
     transform: rotate(180deg);
+}
+
+.lightbox__prev {
+    right: calc(20% - 30px);
+    transform: translateY(-50%);
+    margin-top: 60px;
 }
 
 .lightbox button {
     opacity: .5;
     cursor: pointer;
     transition: opacity .3s;
-    color: #901C1C;
 }
 
 .lightbox button:hover {
@@ -457,7 +506,7 @@ form input {
 a:hover, input:hover, button:hover, select:hover,
 a:focus, input:focus, button:focus, select:focus {
     border-color: rgb(255, 0, 132);
-    border-radius: 10px;
+    border-radius: 5px;
     outline: none;
     box-shadow: 0 0 10px rgb(238, 81, 131);
 }
