@@ -36,9 +36,6 @@ line-height: 23px;
 color: #525252;
 }
 
-.container_photographer_profil {
-}
-
 .photographer_profil {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -142,9 +139,7 @@ color: #525252;
     font-weight: normal;
     text-align: center;
 }
-.close-modal {
 
-}
 /* Refacto DropDoawn menu */
 details.select_container {
     display: inline-block;
@@ -333,11 +328,6 @@ select option :hover{
     justify-content: center;
     height: 30px;
     width: 30px;
-}
-
-.btn-likes {
-}
-.btn-likes-red {
 }
 
 .likes-section {

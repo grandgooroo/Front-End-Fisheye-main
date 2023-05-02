@@ -407,10 +407,10 @@ class ImageMedia extends Media {
     let mediaElementId = this.mediaItem.id;
     this.mediaItem.innerHTML = `
       <button class="media-button" data-id="${mediaElementId}" tabindex="0" aria-label="${this.title}">
-        <img src="${mediaFolder}/${this.image}" alt="${this.title}" class="img" data-id="${mediaElementId}"></img>
+        <img src="${mediaFolder}/${this.image}" alt="nom de l'image, ${this.title}" class="img" data-id="${mediaElementId}"></img>
       </button>
       <div class="media-item-txt">
-        <p>${this.title}</p><span class="likes-count">${this.likes}</span>
+        <p>${this.title}</p><span class="likes-count" aria-label="Likes">${this.likes}</span>
         <div class="likes" data-id="${mediaElementId}" tabindex="0">
           <i class="fas fa-heart like-icon"></i>
         </div>
@@ -439,7 +439,7 @@ class VideoMedia extends Media {
     let mediaElementId = this.mediaItem.id;
     this.mediaItem.innerHTML = `
       <button class="media-button" data-id="${mediaElementId}" tabindex="0" aria-label="${this.title}">
-          <video src="${mediaFolder}/${this.video}" alt="${this.title}" type=video/mp4 class="video" data-id="${mediaElementId}"></video>
+          <video src="${mediaFolder}/${this.video}" alt="nom de la vidéo, ${this.title}" type=video/mp4 class="video" data-id="${mediaElementId}"></video>
       </button>
       <div class="media-item-txt">
         <p>${this.title}</p><span class="likes-count" aria-label="Likes">${this.likes}</span>

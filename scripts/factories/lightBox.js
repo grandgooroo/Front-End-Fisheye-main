@@ -23,6 +23,13 @@ export class Lightbox {
     this.close = this.close.bind(this);
 
     this.boundManageKeyboardEvents = this.manageKeyboardEvents.bind(this);
+
+    // Accesibilité pour les boutons
+    this.prevButton.setAttribute("role", "button");
+    this.prevButton.setAttribute("aria-label", "Précédent");
+
+    this.nextButton.setAttribute("role", "button");
+    this.nextButton.setAttribute("aria-label", "Suivant");
   }
 
   updateMedias(newMedias) {
