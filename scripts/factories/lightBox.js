@@ -30,6 +30,8 @@ export class Lightbox {
 
     this.nextButton.setAttribute("role", "button");
     this.nextButton.setAttribute("aria-label", "Suivant");
+  
+    this.closeButton.setAttribute("aria-label", "Fermer");
   }
 
   updateMedias(newMedias) {

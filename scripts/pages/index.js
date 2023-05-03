@@ -28,7 +28,7 @@ class PhotographersList {
     const article = document.createElement("article");
 
     article.innerHTML = `
-      <a href="./photographer.html?id=${photographer.id}"><img src=${pictureProfil} alt="${photographer.name}"></a>
+      <a href="./photographer.html?id=${photographer.id}"><img src=${pictureProfil} alt="${photographer.name}" tabindex="0"></a>
       <h2>${photographer.name}</h2>
       <h1>${photographer.city} ${photographer.country}</h1>
       <h3>${photographer.tagline}</h3>
