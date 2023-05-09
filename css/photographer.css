@@ -1,6 +1,6 @@
 body {
-    margin-left: auto;
-    margin-right: auto;
+    /* margin-left: auto;
+    margin-right: auto; */
 }
 
 #main {
@@ -23,8 +23,6 @@ body {
 
 .photographer_section h2 {
     color: #D3573C;
-
-
 }
 
 .photographer_section h3 {
@@ -322,12 +320,21 @@ select option :hover{
     margin: 0 0 0 50px;
 }
 
-.likes {
+button.likes {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 30px;
     width: 30px;
+    background-color: transparent; /* Supprimer l'arrière-plan */
+    border: none; /* Supprimer la bordure */
+    outline: none; /* Supprimer l'outline */
+    padding: 0; /* Supprimer les espaces intérieurs */
+    margin: 0; /* Supprimer les espaces extérieurs */
+    font: inherit; /* Utiliser la police héritée du parent */
+    color: inherit; /* Utiliser la couleur héritée du parent */
+    text-align: inherit; /* Utiliser l'alignement du texte hérité du parent */
+    cursor: pointer; /* Changer le curseur en pointeur pour indiquer que le bouton est interactif */
 }
 
 .likes-section {
@@ -591,7 +598,7 @@ a:focus, input:focus, button:focus, select:focus {
     white-space: nowrap;
 }
 
-.downpdown-menu-border {
+.dropdown-menu-border {
 box-shadow: 0px 24px 0px -22px rgb(255, 255, 255);
 height:50px;  
 }

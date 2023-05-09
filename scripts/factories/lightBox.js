@@ -25,10 +25,10 @@ export class Lightbox {
     this.boundManageKeyboardEvents = this.manageKeyboardEvents.bind(this);
 
     // Accesibilité pour les boutons
-    this.prevButton.setAttribute("role", "button");
+    // this.prevButton.setAttribute("role", "button");
     this.prevButton.setAttribute("aria-label", "Précédent");
 
-    this.nextButton.setAttribute("role", "button");
+    // this.nextButton.setAttribute("role", "button");
     this.nextButton.setAttribute("aria-label", "Suivant");
   
     this.closeButton.setAttribute("aria-label", "Fermer");
@@ -49,12 +49,14 @@ export class Lightbox {
     this.nextButton.addEventListener("click", this.next);
     this.prevButton.addEventListener("click", this.previous);
     document.addEventListener("keydown", this.boundManageKeyboardEvents);
+    document.addEventListener("keydown", this.handleKeyDown);
 
     this.lightboxContainer.classList.remove("hidden");
     // Ajouter ici le aria-hidden du la page "main"
     this.mainSection.setAttribute('aria-hidden', 'true');
     console.log(this.mainSection)
     this.closeButton.focus();
+    this.disableBackgroundFocus();
   }
 
   displayMedia() {
@@ -77,6 +79,7 @@ export class Lightbox {
     this.currentMedia = this.medias[this.currentIndex];
 
     this.displayMedia();
+    // this.updateFocus();
   }
 
   next() {
@@ -88,6 +91,7 @@ export class Lightbox {
     this.currentMedia = this.medias[this.currentIndex];
 
     this.displayMedia();
+    // this.updateFocus();
   }
 
   close() {
@@ -97,6 +101,8 @@ export class Lightbox {
     this.nextButton.removeEventListener("click", this.next);
     this.prevButton.removeEventListener("click", this.previous);
     document.removeEventListener("keydown", this.boundManageKeyboardEvents);
+    document.removeEventListener("keydown", this.handleKeyDown);
+    this.enableBackgroundFocus();
     this.mainSection.setAttribute('aria-hidden', 'false');
   }
 
@@ -115,4 +121,64 @@ export class Lightbox {
         break;
     }
   }
+
+  // updateFocus(direction) {
+  //   if (direction === 'previous') {
+  //     this.prevButton.focus();
+  //   } else if (direction === 'next') {
+  //     this.nextButton.focus();
+  //   }
+  // }
+
+  handleKeyDown = (e) => {
+    if (this.lightboxContainer && this.lightboxContainer.contains(document.activeElement)) {
+      const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+      const firstFocusableElement = this.lightboxContainer.querySelectorAll(focusableElements)[0];
+      const focusableContent = this.lightboxContainer.querySelectorAll(focusableElements);
+      const lastFocusableElement = focusableContent[focusableContent.length - 1];
+
+      let isTabPressed = e.key === "Tab" || e.keyCode === 9;
+
+      if (!isTabPressed) {
+        return;
+      }
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstFocusableElement) {
+          lastFocusableElement.focus();
+          e.preventDefault();
+        }
+      } else {
+        if (document.activeElement === lastFocusableElement) {
+          firstFocusableElement.focus();
+          e.preventDefault();
+        }
+      }
+    }
+  };
+
+  disableBackgroundFocus() {
+    const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const backgroundFocusableElements = this.mainSection.querySelectorAll(focusableElements);
+
+    backgroundFocusableElements.forEach((element) => {
+      // Vérifiez si l'élément fait partie du menu déroulant
+      if (!element.closest(".dropdown-menu")) {
+        element.setAttribute('tabindex', '-1');
+      }
+    });
+  }
+
+  enableBackgroundFocus() {
+    const disabledFocusableElements = this.mainSection.querySelectorAll('[tabindex="-1"]');
+
+    disabledFocusableElements.forEach((element) => {
+      // Vérifiez si l'élément fait partie du menu déroulant
+      if (!element.closest(".dropdown-menu")) {
+        element.removeAttribute('tabindex');
+      }
+    });
+  }
+
 }
+

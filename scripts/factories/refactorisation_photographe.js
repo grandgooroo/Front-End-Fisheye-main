@@ -4,7 +4,6 @@ import { ContactFormModal } from '../utils/contactForm.js';
 import { DropDown } from '../utils/dropdown.js';
 import {Lightbox} from '../factories/lightBox.js';
 import { MEDIA_FOLDER } from '../utils/mediasPath.js';
-console.log(MEDIA_FOLDER); // "assets/medias"
 
 const KEY_CODES = {
   TAB: 9,
@@ -65,9 +64,9 @@ class PhotographerService {
     return data;
   }
 
-  getPhotographers() {
-    return this.photographers;
-  }
+  // getPhotographers() {
+  //   return this.photographers;
+  // }
 
   // Récupère l'ID de l'utilisateur à partir de l'URL de la page courante
   getURLId() {
@@ -92,11 +91,11 @@ class PhotographerService {
   }
 
   // Récup l'ID du media
-  getMediaId(id) {
-    return this.medias.filter(
-      (photographers) => photographers.photographerId === id
-    );
-  }
+  // getMediaId(id) {
+  //   return this.medias.filter(
+  //     (photographers) => photographers.photographerId === id
+  //   );
+  // }
 
   async getUserData(userId) {
     this.user = this.getPhotographerId(userId); // user
@@ -134,13 +133,13 @@ class PhotographerService {
   
     article.innerHTML = `
       <section class="photographer_profil">
-        <div class="text-photographe-profil" tabindex="0">
-            <h2>${this.user.name}</h2>
+        <div class="text-photographe-profil" aria-labelledby="photographer-name">
+            <h2 id="photographer-name">${this.user.name}</h2>
             <h1>${this.user.city} ${this.user.country}</h1>
             <h3>${this.user.tagline}</h3>
         </div>
         <div>
-        <button class="contact_button" alt="Contact Me">Contactez-moi</button>
+        <button class="contact_button" aria-label="Contactez-moi, ">Contactez-moi</button>
         </div>
         <div>
             <img src=${pictureProfil} alt="${this.user.name}"></img>
@@ -164,12 +163,12 @@ class PhotographerService {
     menuSection.innerHTML = `
       <span class="js-select">Trier par :</span>
       <nav class="dropdown">
-        <button class="dropdown-toggle" type="button" aria-haspopup="true" alt="Order by">
+        <button class="dropdown-toggle" type="button" id="dropdownMenuButton" aria-haspopup="true" aria-label="Trier par">
           Popularité
         </button>
-        <ul class="dropdown-menu" role="listbox" aria-label="menu de trie des médias" aria-expanded="false">
-          <li role="option" tabindex="0" data-value="likes" class="downpdown-menu-border">Popularité</li>
-          <li role="option" tabindex="0" data-value="title" class="downpdown-menu-border">Titre</li>
+        <ul class="dropdown-menu" role="listbox" aria-labelledby="dropdownMenuButton" aria-label="menu de trie des médias" aria-expanded="false">
+          <li role="option" tabindex="0" data-value="likes" class="dropdown-menu-border">Popularité</li>
+          <li role="option" tabindex="0" data-value="title" class="dropdown-menu-border">Titre</li>
           <li role="option" tabindex="0" data-value="date">Date</li>
         </ul>
       </nav>
@@ -223,52 +222,61 @@ class PhotographerService {
 
   // Fonction qui incrémente le nombre de likes
   incrementLikes = (event) => {
-    const mediaDataId = event.currentTarget.getAttribute("data-id");
+    
+    const button = event.target.closest(".likes[data-id]");
+    const mediaDataId = button.getAttribute("data-id");
     const media = this.medias.find((media) => media.id === parseInt(mediaDataId));
-    const likesSpan = event.currentTarget.closest(".media-item").querySelector("span");
-    const likeButtons = document.querySelectorAll(".likes");
+    const likesSpan = button.closest(".media-item").querySelector("span");
   
     // Incrémentation du nombre de likes pour le bouton actuellement cliqué
-    if (!event.currentTarget.classList.contains("btn-likes-red")) {
+    if (!button.classList.contains("btn-likes-red")) {
       media.likes++;
+      console.log("Likes après incrémentation:", media.likes); // log control
       likesSpan.textContent = media.likes;
       const likedMedias = JSON.parse(localStorage.getItem("likedMedias")) || [];
       likedMedias.push(media);
       localStorage.setItem("likedMedias", JSON.stringify(likedMedias));
-      event.currentTarget.classList.add("btn-likes-red");
+      button.classList.add("btn-likes-red");
     } else {
-      // Si le bouton a déjà été liké, on le délike
+      // Si le bouton a déjà été "liké", on le "délike"
       media.likes--;
+      console.log("Likes après décrémentation:", media.likes); // log control
       likesSpan.textContent = media.likes;
+      
       const likedMedias = JSON.parse(localStorage.getItem("likedMedias")) || [];
       const index = likedMedias.findIndex((m) => m.id === media.id);
       if (index !== -1) {
         likedMedias.splice(index, 1);
         localStorage.setItem("likedMedias", JSON.stringify(likedMedias));
       }
-      event.currentTarget.classList.remove("btn-likes-red");
+      button.classList.remove("btn-likes-red");
     }
   
     // Mise à jour du nombre de likes dans l'interface utilisateur
     this.countLikesDOM();
   
     // Mise à jour du bouton précédemment cliqué
-    this.lastClickedButton = event.currentTarget;
-    console.log(this.lastClickedButton)
+    this.lastClickedButton = button;
+    console.log(this.lastClickedButton);
   }
   
+  
   addLikesEventListeners() {
+    console.log("addLikesEventListeners")
     const likeButtons = document.querySelectorAll(".likes[data-id]");
     likeButtons.forEach((button) => {
-      // Ajouter un écouteur d'événement pour le clic
+      // Ajout d'un écouteur d'événement pour le clic
       button.addEventListener("click", this.incrementLikes);
   
-      // Ajouter un écouteur d'événement pour la touche "Entrée"
-      button.addEventListener("keydown", (event) => {
+      // Ajout d'un écouteur d'événement pour la touche "Entrée"
+      button.addEventListener("keypress", (event) => {
+        console.log(event.keyCode)
+        event.preventDefault();
         if (event.key === "Enter" || event.keyCode === 13) {
           this.incrementLikes(event);
         }
-      });
+    });
+    
     });
   }
   
@@ -411,9 +419,9 @@ class ImageMedia extends Media {
       </button>
       <div class="media-item-txt">
         <p>${this.title}</p><span class="likes-count" aria-label="Likes">${this.likes}</span>
-        <div class="likes" data-id="${mediaElementId}" tabindex="0">
+        <button class="likes" data-id="${mediaElementId}" tabindex="0" role="button" aria-label="Aimer">
           <i class="fas fa-heart like-icon"></i>
-        </div>
+        </button>
       </div>
     `;
     return this.mediaItem;
@@ -439,13 +447,13 @@ class VideoMedia extends Media {
     let mediaElementId = this.mediaItem.id;
     this.mediaItem.innerHTML = `
       <button class="media-button" data-id="${mediaElementId}" tabindex="0" aria-label="${this.title}">
-          <video src="${mediaFolder}/${this.video}" alt="nom de la vidéo, ${this.title}" type=video/mp4 class="video" data-id="${mediaElementId}"></video>
+        <video src="${mediaFolder}/${this.video}" alt="nom de la vidéo, ${this.title}" type=video/mp4 class="video" data-id="${mediaElementId}"></video>
       </button>
       <div class="media-item-txt">
         <p>${this.title}</p><span class="likes-count" aria-label="Likes">${this.likes}</span>
-        <div class="likes" data-id="${mediaElementId}" tabindex="0">
+        <button class="likes" data-id="${mediaElementId}" tabindex="0" role="button" aria-label="Aimer">
           <i class="fas fa-heart like-icon"></i>
-        </div>
+        </button>
       </div>
     `;
     return this.mediaItem;
@@ -459,6 +467,6 @@ photographerService.init().then(() => {
   photographerService.getUserAndMediasFromURL().then(({ photographerData, medias }) => {
     const userId = photographerData.id;
     photographerService.renderHTML(userId, photographerService.lightbox);
-    photographerService.addLikesEventListeners();
+    // photographerService.addLikesEventListeners();
   });
 });

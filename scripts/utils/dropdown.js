@@ -67,12 +67,4 @@ export class DropDown {
         }
       }
     }
-
-    // getNextTabbableElement(currentElement) {
-    //   const tabbableElements = Array.from(document.querySelectorAll('a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, *[tabindex], *[contenteditable]'))
-    //     .filter(element => element.getAttribute('tabindex') !== '-1');
-    
-    //   const currentIndex = tabbableElements.indexOf(currentElement);
-    //   return tabbableElements[currentIndex + 1] || tabbableElements[0];
-    // }
   }

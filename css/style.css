@@ -1,8 +1,9 @@
 @import url("photographer.css");
 
-body {
+html, body {
     font-family: "DM Sans", sans-serif;
-    margin: 0 100px 50px 100px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 header {
@@ -32,13 +33,12 @@ h1 {
 }
 
 .photographers_section article {
-    justify-self: center;
     display: flex;
+    /* justify-self: center;
     justify-content: center;
-    align-items: center;
+    align-items: center; */
     flex-direction: column;
-    padding: 10px;
-    margin: 10px;
+    text-align: center;
 }
 
 .photographers_section article h2 {

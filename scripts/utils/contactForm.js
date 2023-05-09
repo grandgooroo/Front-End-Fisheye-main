@@ -112,14 +112,21 @@ export class ContactFormModal {
 
     enableBackgroundFocus() {
       const disabledFocusableElements = this.mainSection.querySelectorAll('[tabindex="-1"]');
-
+    
       disabledFocusableElements.forEach((element) => {
         // Vérifiez si l'élément fait partie du menu déroulant
         if (!element.closest(".dropdown-menu")) {
           element.removeAttribute('tabindex');
         }
       });
+    
+      // Rétablir le tabindex pour les boutons "like"
+      const likeButtons = document.querySelectorAll(".likes[data-id]");
+      likeButtons.forEach((button) => {
+        button.setAttribute("tabindex", "0");
+      });
     }
+    
 
     
     handleKeyDown = (e) => {

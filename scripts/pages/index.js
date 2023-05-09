@@ -27,8 +27,20 @@ class PhotographersList {
     const pictureProfil = `assets/profil/${photographer.portrait}`;
     const article = document.createElement("article");
 
-    article.innerHTML = `
-      <a href="./photographer.html?id=${photographer.id}"><img src=${pictureProfil} alt="${photographer.name}" tabindex="0"></a>
+    const link = document.createElement('a');
+    link.href = `./photographer.html?id=${photographer.id}`;
+    link.tabIndex = 0;
+    link.innerHTML = `<img src=${pictureProfil} alt="${photographer.name}">`;
+
+    link.addEventListener('keydown', (event) => {
+        if (event.key === "Enter" || event.keyCode === 13) {
+            event.preventDefault();
+            window.location.href = link.href;
+        }
+    });
+
+    article.appendChild(link);
+    article.innerHTML += `
       <h2>${photographer.name}</h2>
       <h1>${photographer.city} ${photographer.country}</h1>
       <h3>${photographer.tagline}</h3>
@@ -36,7 +48,7 @@ class PhotographersList {
     `;
 
     photographersSection.appendChild(article);
-  }
+}
 }
 
 const photographersList = new PhotographersList("data/photographers.json");
