@@ -33,7 +33,7 @@ class PhotographersList {
     link.innerHTML = `<img src=${pictureProfil} alt="${photographer.name}">`;
 
     link.addEventListener('keydown', (event) => {
-        if (event.key === "Enter" || event.keyCode === 13) {
+        if (event.key === "Enter") {
             event.preventDefault();
             window.location.href = link.href;
         }

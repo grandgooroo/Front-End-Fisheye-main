@@ -122,14 +122,6 @@ export class Lightbox {
     }
   }
 
-  // updateFocus(direction) {
-  //   if (direction === 'previous') {
-  //     this.prevButton.focus();
-  //   } else if (direction === 'next') {
-  //     this.nextButton.focus();
-  //   }
-  // }
-
   handleKeyDown = (e) => {
     if (this.lightboxContainer && this.lightboxContainer.contains(document.activeElement)) {
       const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';

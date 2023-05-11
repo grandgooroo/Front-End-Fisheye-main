@@ -5,14 +5,14 @@ import { DropDown } from '../utils/dropdown.js';
 import {Lightbox} from '../factories/lightBox.js';
 import { MEDIA_FOLDER } from '../utils/mediasPath.js';
 
-const KEY_CODES = {
-  TAB: 9,
-  ENTER: 13,
-  SPACE: 32,
-  ESCAPE: 27,
-  UP_ARROW: 38,
-  DOWN_ARROW: 40,
-};
+// const KEY_CODES = {
+//   TAB: 9,
+//   ENTER: 13,
+//   SPACE: 32,
+//   ESCAPE: 27,
+//   UP_ARROW: 38,
+//   DOWN_ARROW: 40,
+// };
 
 class PhotographerService { 
   constructor(lightbox = null) {
@@ -49,13 +49,6 @@ class PhotographerService {
     this.lightbox = new Lightbox(medias);
   }
 
-  // Filtre l'ID (Clé = photographerId) et retourne un nouveau tableau de la section Media du JSon de ce photographe
-  // getPhotographerMedias(userId) {
-  //   return this.medias
-  //     .filter((media) => media.photographerId === userId)
-  //     .map((mediaData) => new Media(mediaData));
-  // }
-  
   async fetchData() {
     const response = await fetch(this.jsonFile);
     const data = await response.json();
@@ -63,10 +56,6 @@ class PhotographerService {
     this.medias = data.media;
     return data;
   }
-
-  // getPhotographers() {
-  //   return this.photographers;
-  // }
 
   // Récupère l'ID de l'utilisateur à partir de l'URL de la page courante
   getURLId() {
@@ -89,13 +78,6 @@ class PhotographerService {
     // console.log(photographerMedias)
     return this.medias.filter((media) => media.photographerId === userId);
   }
-
-  // Récup l'ID du media
-  // getMediaId(id) {
-  //   return this.medias.filter(
-  //     (photographers) => photographers.photographerId === id
-  //   );
-  // }
 
   async getUserData(userId) {
     this.user = this.getPhotographerId(userId); // user
@@ -259,7 +241,6 @@ class PhotographerService {
     this.lastClickedButton = button;
     console.log(this.lastClickedButton);
   }
-  
   
   addLikesEventListeners() {
     console.log("addLikesEventListeners")
@@ -467,6 +448,5 @@ photographerService.init().then(() => {
   photographerService.getUserAndMediasFromURL().then(({ photographerData, medias }) => {
     const userId = photographerData.id;
     photographerService.renderHTML(userId, photographerService.lightbox);
-    // photographerService.addLikesEventListeners();
   });
 });
