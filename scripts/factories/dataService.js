@@ -4,8 +4,8 @@ export class DataService {
     }
 
     async fetchData() {
-        const response = await fetch(this.jsonFile);
-        const data = await response.json();
-        return data;
+        const response = await fetch(this.jsonFile); // utilise le chemin du fichier json passé en paramètre ()
+        const data = await response.json();            // this.jsonFile déclaré dans PhotographerService
+        return data; // retourne les données
     }
 }
