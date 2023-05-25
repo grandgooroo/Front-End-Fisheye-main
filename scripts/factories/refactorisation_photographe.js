@@ -6,16 +6,6 @@ import { DropDown } from '../utils/dropdown.js';
 import {Lightbox} from '../factories/lightBox.js';
 // import { MEDIA_FOLDER } from '../utils/mediasPath.js';
 
-
-// const KEY_CODES = {
-//   TAB: 9,
-//   ENTER: 13,
-//   SPACE: 32,
-//   ESCAPE: 27,
-//   UP_ARROW: 38,
-//   DOWN_ARROW: 40,
-// };
-
 class PhotographerService { 
   constructor() {
     // Initialisation des propriétés 

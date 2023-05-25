@@ -17,7 +17,7 @@ export class Lightbox {
     this.mainSection = document.querySelector("#main");
 
     // Liaison des méthodes d'événement aux instances pour gérer correctement le contexte `this`
-    this.launchLightbox = this.launchLightbox.bind(this);// Lie this à la bonne méthode
+    this.launchLightbox = this.launchLightbox.bind(this);// Lie this à la bonne valeur (l'instance de la classe Ligthbox)
     this.next = this.next.bind(this);
     this.previous = this.previous.bind(this);
     this.close = this.close.bind(this);
@@ -31,7 +31,7 @@ export class Lightbox {
   }
   // Met à jour le tableau des médias en fonction du tri selectionné 
   updateMedias(newMedias) { 
-    this.medias = [...newMedias]; 
+    this.medias = [...newMedias];
   }
   // Ouvre la lightbox avec le média spécifié par son ID
   launchLightbox(id, userId) {

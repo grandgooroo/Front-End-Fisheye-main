@@ -19,7 +19,7 @@ export class DropDown {
         // Récupère le texte et la valeur de l'élément du menu
         const val = item.textContent;
         const dataValue = item.getAttribute('data-value');
-        // Met à jour le texte du bouton et la valeur du menu déroulant
+        // Met à jour le texte du bouton et la valeur du menu déroulant (première entré du menu)
         toggler.textContent = val;
         this.value = dataValue;
         // Ferme le menu et déclenche un événement de changement
@@ -51,15 +51,17 @@ export class DropDown {
         item.addEventListener('click', () => setValue(item));
       });
       // Initialise les propriétés de la classe
-      this.element = dropDown;
-      this.value = toggler.textContent;
+      this.element = dropDown; // l'element qui possède la class .dropdown
+      this.value = toggler.textContent; // Le texte courant affiché dans le bouton assigné à this.value
+      
       // Méthode pour ouvrir ou fermer le menu déroulant
       this.toggle = (expand = null) => {
-        expand = expand === null
-          ? menu.getAttribute('aria-expanded') !== 'true'
+        expand = expand === null // Initialise la valeur d'expend à null si aucune valeur (true/false) n'est trouvé
+          ? menu.getAttribute('aria-expanded') !== 'true' // si different de true alors expand
           : expand;
+          // if expand = null expand = getAttribute('aria-expanded') !== 'true', peut être créer une fonction isOpen
     
-        menu.setAttribute('aria-expanded', expand);
+        menu.setAttribute('aria-expanded', expand); // Met à jout l'état d'expand 
         // Ajoute la classe active au bouton si le menu est ouvert, la retire sinon
         if(expand) {
           toggler.classList.add('active');
